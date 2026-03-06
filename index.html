@@ -893,24 +893,7 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
 </div>
 
 
-<div id="cloudModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:flex-end;justify-content:center;">
-  <div style="background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:500px;border-top:1px solid var(--border);">
-    <div style="width:40px;height:4px;background:var(--muted);border-radius:2px;margin:0 auto 16px;"></div>
-    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:4px;">☁️ Cloudinary sozlamalari</div>
-    <div style="font-size:12px;color:var(--muted2);margin-bottom:16px;">Rasmlar barcha qurilmalarda ko'rinishi uchun</div>
-    <div style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:12px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--muted2);line-height:1.7;">
-      1. <a href="https://cloudinary.com/users/register/free" target="_blank" style="color:var(--accent);">cloudinary.com</a> ga ro'yxatdan o'ting (bepul)<br>
-      2. Dashboard → Cloud name ni nusxalang<br>
-      3. Settings → Upload → Add upload preset → Unsigned → Saqlang
-    </div>
-    <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Cloud Name</div>
-    <input id="clCloudName" placeholder="masalan: demoabc123" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;">
-    <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Upload Preset</div>
-    <input id="clPreset" placeholder="masalan: ritm_unsigned" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;margin-bottom:14px;">
-    <button onclick="saveCloudSettings()" style="width:100%;padding:13px;background:linear-gradient(135deg,#00b4c8,#007a8a);color:#fff;border:none;border-radius:13px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;">💾 Saqlash</button>
-    <button onclick="document.getElementById('cloudModal').style.display='none'" style="width:100%;padding:11px;background:var(--card2);border:1px solid var(--border);color:var(--muted2);border-radius:13px;font-size:13px;font-weight:700;cursor:pointer;">Bekor qilish</button>
-  </div>
-</div>
+
 
 <div class="pat-overlay" id="patOverlay">
   <div class="pat-sheet">
@@ -949,28 +932,9 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
 
 
 
-// ── Setup: Login sahifasida Cloudinary sozlash ──
-function saveSetupCloud(){
-  const cloud = (document.getElementById('setupCloud').value||'').trim();
-  const preset = (document.getElementById('setupPreset').value||'').trim();
-  if(!cloud||!preset){ showToast('Ikkala maydon to\'ldiring!','⚠️'); return; }
-  localStorage.setItem('cl_cloud', cloud);
-  localStorage.setItem('cl_preset', preset);
-  const st = document.getElementById('setupCloudStatus');
-  if(st){ st.style.display='block'; }
-  showToast('Cloudinary sozlandi! ✅','☁️');
-}
 
-function initSetupCloudUI(){
-  const cloud = localStorage.getItem('cl_cloud')||'';
-  const preset = localStorage.getItem('cl_preset')||'';
-  const ci = document.getElementById('setupCloud');
-  const pi = document.getElementById('setupPreset');
-  const st = document.getElementById('setupCloudStatus');
-  if(ci) ci.value = cloud;
-  if(pi) pi.value = preset;
-  if(st && cloud && preset){ st.style.display='block'; }
-}
+
+
 
 let currentUser=null,currentRoom=null,currentSlide=0,editingRoomId=null,selSt='bosh';
 let rooms=[],bookings=[],clients=[],patients=[],food={},finance=[],buildings=[],_saveTimer=null;
@@ -2015,80 +1979,19 @@ function closeRoomForm(){document.getElementById('roomFormModal').classList.remo
 
 
 
-// ── Cloudinary Settings ──
-function openCloudSettings(){
-  const modal = document.getElementById('cloudModal');
-  if(!modal) return;
-  document.getElementById('clCloudName').value = localStorage.getItem('cl_cloud')||'';
-  document.getElementById('clPreset').value = localStorage.getItem('cl_preset')||'';
-  modal.style.display = 'flex';
-}
-function saveCloudSettings(){
-  const cloud = document.getElementById('clCloudName').value.trim();
-  const preset = document.getElementById('clPreset').value.trim();
-  if(!cloud||!preset){ showToast('To\'ldiring!','⚠️'); return; }
-  localStorage.setItem('cl_cloud', cloud);
-  localStorage.setItem('cl_preset', preset);
-  document.getElementById('cloudModal').style.display = 'none';
-  showToast('Cloudinary sozlandi! ✅ Endi rasmlar bulutga yuklanadi.','☁️');
-}
-function getCloudConfig(){
-  return {
-    cloud: localStorage.getItem('cl_cloud')||CL_CLOUD,
-    preset: localStorage.getItem('cl_preset')||CL_PRESET
-  };
-}
 
-// ── Cloudinary rasm yuklash ──
-const CL_CLOUD = 'demoritm'; // Cloudinary cloud name (o'zgartiring)
-const CL_PRESET = 'ritm_clinic'; // Upload preset (unsigned)
 
-async function uploadToCloudinary(base64Data){
-  try{
-    // base64 -> blob
-    const res = await fetch(base64Data);
-    const blob = await res.blob();
-    const fd = new FormData();
-    fd.append('file', blob);
-    fd.append('upload_preset', cfg.preset);
-    fd.append('folder', 'ritm_clinic');
-    const cfg = getCloudConfig();
-    const r = await fetch('https://api.cloudinary.com/v1_1/'+cfg.cloud+'/image/upload', {
-      method:'POST', body:fd
-    });
-    if(!r.ok) return null;
-    const d = await r.json();
-    return d.secure_url || null;
-  }catch(e){ return null; }
-}
 
-async function uploadAllRoomImgs(){
-  // _roomImgs ichidagi base64 larni Cloudinary ga yuklash
-  for(let i=0;i<_roomImgs.length;i++){
-    const img = _roomImgs[i];
-    if(img && img.startsWith('data:')){
-      const prev = document.getElementById('rfImg'+(i+1)+'Preview');
-      if(prev) prev.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:var(--accent);">⬆️ Yuklanmoqda...</div>';
-      const url = await uploadToCloudinary(img);
-      if(url){
-        _roomImgs[i] = url;
-        if(prev) prev.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">';
-      } else {
-        // Cloudinary ishlamasa base64 saqlaydi (lokal)
-        if(prev) prev.innerHTML = '<img src="'+img+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">';
-      }
-    }
-  }
-}
+
+
+
+
 async function saveRoom(){
   const num = document.getElementById('rfNum').value.trim();
   const type = parseInt(document.getElementById('rfType').value);
   const icon = document.getElementById('rfIcon').value.trim()||'🛏️';
   if(!num){showToast("Xona raqamini kiriting!",'⚠️');return;}
-  // Rasmlarni Cloudinary ga yuklash
-  showLoading('Rasmlar yuklanmoqda...');
-  await uploadAllRoomImgs();
-  hideLoading();
+
   const price = type===3?150000:180000;
   const checkedFeatures=Array.from(document.querySelectorAll('#rfFeaturesGrid .feat-cb:checked')).map(cb=>cb.value);
   const features=checkedFeatures.length?checkedFeatures:(type===3
