@@ -895,6 +895,35 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
 
 
 
+
+<div id="adminBronModal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);align-items:flex-end;justify-content:center;">
+  <div style="background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:500px;border-top:1px solid var(--border);max-height:90vh;overflow-y:auto;">
+    <div style="width:40px;height:4px;background:var(--muted);border-radius:2px;margin:0 auto 16px;"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:4px;">📋 Xona bron qilish</div>
+    <div id="adminBronRoomInfo" style="font-size:12px;color:var(--accent);margin-bottom:16px;"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;margin-bottom:6px;">Mijoz ismi</div>
+    <input id="abName" placeholder="Ism Familiya" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;box-sizing:border-box;">
+    <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;margin-bottom:6px;">Telefon</div>
+    <input id="abPhone" placeholder="+998 90 123 45 67" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;box-sizing:border-box;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;margin-bottom:6px;">Kirish</div>
+        <input type="date" id="abStart" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:13px;color:var(--text);outline:none;box-sizing:border-box;">
+      </div>
+      <div>
+        <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;margin-bottom:6px;">Chiqish</div>
+        <input type="date" id="abEnd" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:13px;color:var(--text);outline:none;box-sizing:border-box;">
+      </div>
+    </div>
+    <div id="abCostInfo" style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:12px;padding:12px;margin-bottom:14px;display:none;">
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;"><span style="color:var(--muted2);">Kunlar</span><span id="abDays" style="color:var(--white);font-weight:700;"></span></div>
+      <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:800;"><span style="color:var(--muted2);">Jami</span><span id="abTotal" style="color:var(--accent2);"></span></div>
+    </div>
+    <button onclick="confirmAdminBron()" style="width:100%;padding:14px;background:linear-gradient(135deg,#00b4c8,#007a8a);color:#fff;border:none;border-radius:13px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;">✅ Bronlash</button>
+    <button onclick="closeAdminBronModal()" style="width:100%;padding:11px;background:var(--card2);border:1px solid var(--border);color:var(--muted2);border-radius:13px;font-size:13px;cursor:pointer;">Bekor qilish</button>
+  </div>
+</div>
+
 <div class="pat-overlay" id="patOverlay">
   <div class="pat-sheet">
     <div class="modal-handle"></div>
@@ -1730,6 +1759,7 @@ function searchRooms(q){
       +'<button class="arc-btn av" data-id="'+r.id+'" data-st="bosh" onclick="setRoomSt(this.dataset.id,this.dataset.st)">✅ Bosh</button>'
       +'<button class="arc-btn bsy" data-id="'+r.id+'" data-st="band" onclick="setRoomSt(this.dataset.id,this.dataset.st)">🔴 Band</button>'
       +'<button class="arc-btn ed" data-id="'+r.id+'" onclick="openRoomForm(this.dataset.id)">✏️</button>'
+      +'<button class="arc-btn" style="background:rgba(0,229,160,0.1);border-color:rgba(0,229,160,0.25);color:var(--accent2);" data-id="'+r.id+'" onclick="openAdminBronModal(this.dataset.id)">📋 Bron</button>'
       +'<button class="arc-btn dl" data-id="'+r.id+'" onclick="deleteRoom(this.dataset.id)">🗑</button>'
       +'</div></div>';
   }).join('');
@@ -2458,6 +2488,99 @@ async function savePatient(){
   await persistAll();
 }
 
+
+
+// ── Admin paneldan bron qilish ──
+let _adminBronRoomId = null;
+
+function openAdminBronModal(roomId){
+  const r = rooms.find(x=>x.id===roomId);
+  if(!r) return;
+  _adminBronRoomId = roomId;
+  const modal = document.getElementById('adminBronModal');
+  document.getElementById('adminBronRoomInfo').textContent = 'Xona №'+r.num+' · '+r.type+' kishilik · '+fp(r.price)+'/kun';
+  document.getElementById('abName').value = '';
+  document.getElementById('abPhone').value = '';
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('abStart').value = today;
+  document.getElementById('abEnd').value = '';
+  document.getElementById('abCostInfo').style.display = 'none';
+  modal.style.display = 'flex';
+  // Sana o'zgarganda narx hisoblash
+  ['abStart','abEnd'].forEach(id=>{
+    document.getElementById(id).onchange = calcAdminBronCost;
+  });
+}
+
+function closeAdminBronModal(){
+  document.getElementById('adminBronModal').style.display = 'none';
+  _adminBronRoomId = null;
+}
+
+function calcAdminBronCost(){
+  const s = document.getElementById('abStart').value;
+  const e = document.getElementById('abEnd').value;
+  if(!s||!e) return;
+  const r = rooms.find(x=>x.id===_adminBronRoomId);
+  if(!r) return;
+  const days = Math.round((new Date(e)-new Date(s))/864e5);
+  if(days<=0){ document.getElementById('abCostInfo').style.display='none'; return; }
+  const total = days * r.price * r.type;
+  document.getElementById('abDays').textContent = days+' kun';
+  document.getElementById('abTotal').textContent = fp(total);
+  document.getElementById('abCostInfo').style.display = 'block';
+}
+
+async function confirmAdminBron(){
+  const name = document.getElementById('abName').value.trim();
+  const phone = document.getElementById('abPhone').value.trim();
+  const start = document.getElementById('abStart').value;
+  const end = document.getElementById('abEnd').value;
+  if(!name){ showToast('Mijoz ismini kiriting!','⚠️'); return; }
+  if(!start||!end){ showToast('Sana kiriting!','⚠️'); return; }
+  const days = Math.round((new Date(end)-new Date(start))/864e5);
+  if(days<=0){ showToast('Chiqish sanasi kirish sanasidan keyin bo\'lsin!','⚠️'); return; }
+
+  const r = rooms.find(x=>x.id===_adminBronRoomId);
+  if(!r){ showToast('Xona topilmadi!','⚠️'); return; }
+
+  const total = days * r.price * r.type;
+  const bron = {
+    id: uid(),
+    roomId: r.id,
+    roomNum: r.num,
+    roomType: r.type,
+    client: name,
+    phone: phone||'—',
+    start, end, days, total,
+    status: 'confirmed',
+    createdAt: Date.now(),
+    byAdmin: true
+  };
+  bookings.push(bron);
+
+  // Xonani band qilish
+  r.status = 'band';
+  r.checkoutDate = end;
+
+  // Moliyaga qo'shish
+  finance.push({
+    id: uid(),
+    type: 'kirim',
+    amount: total,
+    desc: 'Bron: '+name+' — Xona №'+r.num+' ('+days+' kun)',
+    date: new Date().toISOString().split('T')[0],
+    time: new Date().toLocaleTimeString('uz',{hour:'2-digit',minute:'2-digit'}),
+    bookingId: bron.id
+  });
+
+  closeAdminBronModal();
+  renderAdminRoomsMgmt();
+  renderHomeInfo();
+  renderAlerts();
+  showToast('✅ Bron qilindi! '+name+' — Xona №'+r.num,'📋');
+  await persistAll();
+}
 
 function onPatRoomChange(roomNum){
   if(!roomNum) return;
