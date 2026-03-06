@@ -907,7 +907,7 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
     </div>
     <div class="pat-grid2" style="margin-top:10px;">
       <div class="pat-field"><div class="rf-lbl">Yoshi</div><input class="rf-inp" id="patAge" type="number" placeholder="25"></div>
-      <div class="pat-field"><div class="rf-lbl">Xona raqami</div><input class="rf-inp" id="patRoom" placeholder="101"></div>
+      <div class="pat-field"><div class="rf-lbl">Xona</div><select class="rf-inp" id="patRoom" onchange="onPatRoomChange(this.value)"><option value="">— Xona tanlang —</option></select></div>
     </div>
     <div class="pat-section-title">Manzil va diagnoz</div>
     <div class="rf-lbl">Yashash manzili</div>
@@ -1223,6 +1223,9 @@ function startPolling(){
       }
     }catch(e){}
   }, 15000);
+  // Har kuni chiqish vaqtlarini tekshirish
+  checkPatientCheckouts();
+  setInterval(checkPatientCheckouts, 60*60*1000);
 }
 
 function showScreen(id){
@@ -2376,6 +2379,19 @@ function renderPatients(){
 }
 
 function openPatientForm(id){
+  // Xonalar select ni to'ldirish
+  var sel=document.getElementById('patRoom');
+  if(sel){
+    sel.innerHTML='<option value="">— Xona tanlang —</option>';
+    rooms.forEach(function(r){
+      var opt=document.createElement('option');
+      opt.value=r.num;
+      var stTxt=r.status==='bosh'?'🟢 Bo\'sh':r.status==='band'?'🔴 Band':'🟡 Yaqinda';
+      opt.textContent='Xona №'+r.num+' ('+r.type+' kishi) — '+stTxt;
+      if(r.status==='band') opt.style.color='#888';
+      sel.appendChild(opt);
+    });
+  }
   var p=id?patients.find(function(x){return x.id===id;}):null;
   var overlay=document.getElementById('patOverlay');
   document.getElementById('patId').value=p?p.id:'';
@@ -2405,22 +2421,87 @@ async function savePatient(){
   var checkOut=document.getElementById('patCheckOut').value;
   var note=document.getElementById('patNote').value.trim();
   if(!name||!surname||!room){showToast("Ism, familiya va xona kiriting!",'\u26a0\ufe0f');return;}
+  // Eski xonani bo'shatish (agar o'zgartirgan bo'lsa)
   if(id){
+    var old=patients.find(function(p){return p.id===id;});
+    if(old&&old.room&&old.room!==room){
+      var oldR=rooms.find(function(r){return String(r.num)===String(old.room);});
+      if(oldR){
+        var stillUsed=patients.some(function(p){return p.id!==id&&String(p.room)===String(old.room)&&(!p.checkOut||new Date(p.checkOut)>=new Date());});
+        if(!stillUsed){oldR.status='bosh';oldR.checkoutDate=null;}
+      }
+    }
     var idx=patients.findIndex(function(p){return p.id===id;});
     if(idx>=0)patients[idx]={id,name,surname,age,address,diag,room,checkIn,checkOut,note};
   } else {
     patients.push({id:uid(),name,surname,age,address,diag,room,checkIn,checkOut,note,createdAt:Date.now()});
   }
-  closePatientForm();renderPatients();
-  showToast('Bemor saqlandi!','\u2705');
+  // Xonani band qilish
+  if(room){
+    var r=rooms.find(function(x){return String(x.num)===String(room);});
+    if(r){
+      var today=new Date();today.setHours(0,0,0,0);
+      var cout=checkOut?new Date(checkOut):null;
+      if(cout){cout.setHours(0,0,0,0);}
+      if(cout&&cout<today){
+        // Muddati o'tgan — bo'sh
+        r.status='bosh';r.checkoutDate=null;
+      } else if(cout){
+        r.status='band';r.checkoutDate=checkOut;
+      } else {
+        r.status='band';r.checkoutDate=null;
+      }
+    }
+  }
+  closePatientForm();renderPatients();renderAdminRoomsMgmt();renderHomeInfo();renderAlerts();
+  showToast('Bemor saqlandi! Xona band qilindi ✅','\u2705');
   await persistAll();
 }
 
+
+function onPatRoomChange(roomNum){
+  if(!roomNum) return;
+  var r=rooms.find(function(x){return String(x.num)===String(roomNum);});
+  if(r&&r.checkoutDate&&!document.getElementById('patCheckOut').value){
+    document.getElementById('patCheckOut').value=r.checkoutDate;
+  }
+}
+
+function checkPatientCheckouts(){
+  // Chiqish vaqti kelgan bemorlarni tekshirish va xonani bo'shatish
+  var today=new Date();today.setHours(0,0,0,0);
+  var changed=false;
+  patients.forEach(function(p){
+    if(!p.checkOut||!p.room) return;
+    var cout=new Date(p.checkOut);cout.setHours(0,0,0,0);
+    if(cout<today){
+      var r=rooms.find(function(x){return String(x.num)===String(p.room);});
+      if(r&&r.status==='band'){
+        var stillActive=patients.some(function(x){
+          return x.id!==p.id&&String(x.room)===String(p.room)&&x.checkOut&&new Date(x.checkOut)>=today;
+        });
+        if(!stillActive){
+          r.status='bosh';r.checkoutDate=null;changed=true;
+          showToast('⚠️ Xona №'+r.num+' — bemor muddati tugadi, xona bo\'shatildi','🔔');
+        }
+      }
+    }
+  });
+  if(changed){renderAdminRoomsMgmt();renderHomeInfo();renderAlerts();persistAll();}
+}
 async function delPatient(id){
   if(!confirm("Bemorni o\'chirish?"))return;
-  patients=patients.filter(function(p){return p.id!==id;});
-  renderPatients();
-  showToast("O\'chirildi",'\U0001f5d1');
+  var p=patients.find(function(x){return x.id===id;});
+  if(p&&p.room){
+    var stillUsed=patients.some(function(x){return x.id!==id&&String(x.room)===String(p.room);});
+    if(!stillUsed){
+      var r=rooms.find(function(x){return String(x.num)===String(p.room);});
+      if(r){r.status='bosh';r.checkoutDate=null;}
+    }
+  }
+  patients=patients.filter(function(x){return x.id!==id;});
+  renderPatients();renderAdminRoomsMgmt();renderHomeInfo();renderAlerts();
+  showToast("O\'chirildi",'🗑️');
   await persistAll();
 }
 
