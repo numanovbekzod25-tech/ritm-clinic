@@ -2031,23 +2031,48 @@ document.addEventListener('DOMContentLoaded',function(){
 });
 
 (async function init(){
-  // 1) Serverdan data yukla (deploy3 uslubi — hamma qurilma bir xil ko'radi)
-  await loadAllData();
-
-  // 2) UI ga joylashtirish
-  try{ updateBuildingSelect(); }catch(e){}
-  try{ renderHomeInfo(); renderAlerts(); renderAllRooms(); }catch(e){}
-  try{ renderPublicFood(); }catch(e){}
-
-  // 3) Session tekshir — 1 marta kirsa qayta so'ramasin (1 yil)
+  // 1) AVVAL session tekshir — tezda ko'rsatish
   try{
     const s = loadSession();
-    if(s && s.a){ showScreen('adminScreen'); renderAdminDashboard(); }
+    if(s && s.a){ showScreen('adminScreen'); }
     else if(s && s.u){ currentUser=s.u; enterMain(s.u.name.split(' ')[0]); }
     else{ showScreen('loginScreen'); }
   }catch(e){ showScreen('loginScreen'); }
 
-  // 4) Polling — har 15 sekunda yangilash
+  // 2) Lokal cache dan tez yukla
+  try{
+    const keys = ['rc_rooms','rc_bookings','rc_clients','rc_patients','rc_food','rc_finance','rc_buildings'];
+    keys.forEach(k=>{
+      const v = localStorage.getItem(k);
+      if(v){ window.__STORAGE_CACHE__[k]=JSON.parse(v); window.__DATA__[k]=v; }
+    });
+    rooms    = _loadData('rc_rooms',    null) || getDefaultRooms();
+    bookings = _loadData('rc_bookings', []);
+    clients  = _loadData('rc_clients',  []);
+    patients = _loadData('rc_patients', []);
+    food     = _loadData('rc_food',     null) || getDefaultFood();
+    finance  = _loadData('rc_finance',  []);
+    buildings= _loadData('rc_buildings',null) || getDefaultBuildings();
+  }catch(e){}
+
+  // 3) UI ni yangilash
+  try{ updateBuildingSelect(); }catch(e){}
+  try{ renderHomeInfo(); renderAlerts(); renderAllRooms(); }catch(e){}
+  try{ renderPublicFood(); }catch(e){}
+
+  // 4) Fon da serverdan yangilash
+  loadAllData().then(()=>{
+    try{ updateBuildingSelect(); }catch(e){}
+    try{ renderHomeInfo(); renderAlerts(); renderAllRooms(); }catch(e){}
+    try{ renderPublicFood(); }catch(e){}
+    // Admin bo'lsa dashboardni ham yangilash
+    try{
+      const s = loadSession();
+      if(s && s.a) renderAdminDashboard();
+    }catch(e){}
+  });
+
+  // 5) Polling — har 15 sekunda yangilash
   startPolling();
 })();
 
