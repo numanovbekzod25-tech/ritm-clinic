@@ -530,7 +530,7 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
     <div class="bnav-item" onclick="goSlide(1)"><div class="bi">🛏️</div><div class="bl">Xonalar</div></div>
     <div class="bnav-item" onclick="goSlide(2)"><div class="bi">💰</div><div class="bl">Narxlar</div></div>
     <div class="bnav-item" onclick="goSlide(3)"><div class="bi">🍽️</div><div class="bl">Taom</div></div>
-    <div class="bnav-item" onclick="goSlide(4)"><div class="bi">🏨</div><div class="bl">Qulaylik</div></div>
+    <div class="bnav-item" onclick="goSlide(4)"><div class="bi">🏨</div><div class="bl">Sharoit</div></div>
     <div class="bnav-item" onclick="goSlide(5)"><div class="bi">📋</div><div class="bl">Bronlar</div></div>
   </nav>
   <div class="slides-wrap">
@@ -646,32 +646,11 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
         </div>
       </div>
 
-      <!-- SLIDE 4: Qulayliklar -->
+      <!-- SLIDE 4: Sharoitlar -->
       <div class="slide" id="slide-4">
-        <div class="slide-page-title">🏨 Qulayliklar</div>
-        <div class="am-cat-tabs">
-          <div class="am-cat-tab am-cat-active" onclick="switchAmCat('tibbiy',this)">🏥 Tibbiy</div>
-          <div class="am-cat-tab" onclick="switchAmCat('dam',this)">🏊 Dam olish</div>
-          <div class="am-cat-tab" onclick="switchAmCat('xona',this)">🛏️ Xona</div>
-        </div>
-        <div class="am-cat-section" id="amcat-tibbiy">
-          <div class="am-detail-card"><div class="am-dc-icon">🏥</div><div class="am-dc-body"><div class="am-dc-name">24/7 Hamshira xizmati</div><div class="am-dc-desc">Kecha-kunduz tibbiy yordam va doimiy kuzatuv. Favqulodda holatlarda tez munosabat.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">⚡</div><div class="am-dc-body"><div class="am-dc-name">Fizioterapiya</div><div class="am-dc-desc">Elektroforez, UHF, magnit terapiya, lazer terapiya. Shifokor ko'rsatmasiga ko'ra amalga oshiriladi.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">🔬</div><div class="am-dc-body"><div class="am-dc-name">Laboratoriya</div><div class="am-dc-desc">Zamonaviy uskunalar bilan jihozlangan laboratoriya. Tahlillar tez va aniq.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">🍽️</div><div class="am-dc-body"><div class="am-dc-name">Dietali ovqatlanish</div><div class="am-dc-desc">Kuniga 3 mahal issiq ovqat. Dietolog tomonidan ishlab chiqilgan maxsus menyu.</div></div></div>
-        </div>
-        <div class="am-cat-section" id="amcat-dam" style="display:none">
-          <div class="am-detail-card"><div class="am-dc-icon">🏊</div><div class="am-dc-body"><div class="am-dc-name">Jakuziy</div><div class="am-dc-desc">Har kuni 17:00–21:00. Gidromasaj vannasi. Relaksatsiya va davolash effekti.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">🌿</div><div class="am-dc-body"><div class="am-dc-name">Yashil bog'</div><div class="am-dc-desc">Ochiq havoda dam olish uchun qulay maydon. Toza havo va tabiat.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">📺</div><div class="am-dc-body"><div class="am-dc-name">Kabel TV</div><div class="am-dc-desc">Barcha xonalarda kabel televizor. Ko'plab kanallar mavjud.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">📡</div><div class="am-dc-body"><div class="am-dc-name">Yuqori tezlikli Wi-Fi</div><div class="am-dc-desc">Butun bino bo'ylab tez internet. Ish va ko'ngil ochish uchun.</div></div></div>
-        </div>
-        <div class="am-cat-section" id="amcat-xona" style="display:none">
-          <div class="am-detail-card"><div class="am-dc-icon">❄️</div><div class="am-dc-body"><div class="am-dc-name">Konditsioner</div><div class="am-dc-desc">Barcha xonalarda zamonaviy konditsioner. Yoz va qish uchun qulay harorat.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">🚿</div><div class="am-dc-body"><div class="am-dc-name">Shaxsiy hojatxona</div><div class="am-dc-desc">2 kishilik xonalarda alohida hojatxona. 3 kishiliklarida umumiy toza hojatxona.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">🛏️</div><div class="am-dc-body"><div class="am-dc-name">Qulay to'shak</div><div class="am-dc-desc">Ortopedik matras. Toza to'shak choyshaflari har kuni almashtiriladi.</div></div></div>
-          <div class="am-detail-card"><div class="am-dc-icon">🧹</div><div class="am-dc-body"><div class="am-dc-name">Kunlik tozalash</div><div class="am-dc-desc">Har kuni xonani tozalash va dezinfeksiya. Steril muhit.</div></div></div>
-        </div>
+        <div class="slide-page-title">🏨 Sharoitlar</div>
+        <div class="am-cat-tabs" id="facCatTabs"></div>
+        <div id="facList"></div>
       </div>
 
       <!-- SLIDE 5: Bronlar -->
@@ -805,6 +784,7 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
       <div class="sb-item" onclick="showAdminPage('Finance',this)"><div class="si">💰</div><div class="sl">Moliya</div></div>
       <div class="sb-item" onclick="showAdminPage('Bookings',this)"><div class="si">📋</div><div class="sl">Bron</div></div>
       <div class="sb-item" onclick="showAdminPage('Social',this)"><div class="si">📣</div><div class="sl">Ijtimoiy</div></div>
+      <div class="sb-item" onclick="showAdminPage('Facilities',this)"><div class="si">🏨</div><div class="sl">Sharoit</div></div>
     </div>
     <div class="admin-content">
       <div class="admin-page active" id="adminDashboard">
@@ -819,7 +799,47 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
         <div class="admin-rooms-grid" id="adminRoomsMgmtGrid"></div>
       </div>
       <div class="admin-page" id="adminBookings">
-        <div class="admin-page-title">📋 Barcha bronlar</div>
+        <div class="admin-page-title">📋 Bronlar boshqaruvi</div>
+
+        <!-- Yangi bron qo'shish -->
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:800;color:var(--white);margin-bottom:12px;">➕ Yangi bron qo'shish</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div>
+              <div style="font-size:10px;color:var(--muted2);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Mijoz</div>
+              <select id="nb_client" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:12px;color:var(--text);outline:none;">
+                <option value="">— Mijoz tanlang —</option>
+              </select>
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--muted2);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Xona</div>
+              <select id="nb_room" onchange="nbCalcCost()" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:12px;color:var(--text);outline:none;">
+                <option value="">— Xona tanlang —</option>
+              </select>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+            <div>
+              <div style="font-size:10px;color:var(--muted2);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Kirish</div>
+              <input type="date" id="nb_start" onchange="nbCalcCost()" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:12px;color:var(--text);outline:none;box-sizing:border-box;">
+            </div>
+            <div>
+              <div style="font-size:10px;color:var(--muted2);font-weight:700;text-transform:uppercase;margin-bottom:4px;">Chiqish</div>
+              <input type="date" id="nb_end" onchange="nbCalcCost()" style="width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:9px 10px;font-size:12px;color:var(--text);outline:none;box-sizing:border-box;">
+            </div>
+          </div>
+          <div id="nb_cost" style="display:none;background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12px;color:var(--accent2);font-weight:800;"></div>
+          <button onclick="nbSave()" style="width:100%;padding:11px;background:linear-gradient(135deg,#00b4c8,#007a8a);color:#fff;border:none;border-radius:11px;font-size:13px;font-weight:800;cursor:pointer;">✅ Bronlash</button>
+        </div>
+
+        <!-- Tahlil -->
+        <div style="background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:16px;">
+          <div style="font-size:13px;font-weight:800;color:var(--white);margin-bottom:12px;">📊 Bronlar tahlili</div>
+          <div id="bronAnalytics" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+        </div>
+
+        <!-- Barcha bronlar -->
+        <div style="font-size:13px;font-weight:800;color:var(--white);margin-bottom:10px;">📋 Barcha bronlar</div>
         <div id="allBookingsTable" style="overflow-x:auto;"></div>
       </div>
       <div class="admin-page" id="adminClients">
@@ -851,6 +871,12 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
       <div class="admin-page" id="adminSocial">
         <div class="admin-page-title">📣 Ijtimoiy tarmoqlar</div>
         <div id="socialPageContent"></div>
+      </div>
+
+      <div class="admin-page" id="adminFacilities">
+        <div class="admin-page-title">🏨 Sharoitlar boshqaruvi</div>
+        <button class="btn-add" onclick="openFacForm(null)" style="margin-bottom:14px;">+ Sharoit qo'shish</button>
+        <div id="adminFacList"></div>
       </div>
 
       <div class="admin-page" id="adminFinance">
@@ -889,12 +915,46 @@ td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text
     <div class="abn-item" onclick="showAdminPage('Finance',this)"><div class="abn-i">💰</div><div class="abn-l">Moliya</div></div>
     <div class="abn-item" onclick="showAdminPage('Bookings',this)"><div class="abn-i">📋</div><div class="abn-l">Bron</div></div>
     <div class="abn-item" onclick="showAdminPage('Social',this)"><div class="abn-i">📣</div><div class="abn-l">Ijtimoiy</div></div>
+    <div class="abn-item" onclick="showAdminPage('Facilities',this)"><div class="abn-i">🏨</div><div class="abn-l">Sharoit</div></div>
   </nav>
 </div>
 
 
 
 
+
+<div class="rf-overlay" id="facFormModal">
+  <div class="rf-sheet">
+    <div class="modal-handle"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:18px;" id="facFormTitle">Yangi sharoit</div>
+    <input type="hidden" id="facId">
+    <div style="display:grid;grid-template-columns:60px 1fr;gap:10px;margin-bottom:10px;">
+      <div>
+        <div class="rf-lbl">Emoji</div>
+        <input class="rf-inp" id="facIcon" placeholder="🏥" style="text-align:center;font-size:22px;">
+      </div>
+      <div>
+        <div class="rf-lbl">Nomi</div>
+        <input class="rf-inp" id="facName" placeholder="Masalan: Jakuziy">
+      </div>
+    </div>
+    <div class="rf-lbl">Tavsif</div>
+    <textarea class="rf-inp" id="facDesc" rows="2" placeholder="Qisqa tavsif..." style="resize:vertical;"></textarea>
+    <div class="rf-lbl">Kategoriya</div>
+    <select class="rf-inp" id="facCat">
+      <option value="tibbiy">🏥 Tibbiy</option>
+      <option value="dam">🏊 Dam olish</option>
+      <option value="xona">🛏️ Xona</option>
+    </select>
+    <div class="rf-lbl" style="margin-top:10px;">Rasm (ixtiyoriy)</div>
+    <div id="facImgPreview" style="width:100%;height:140px;background:var(--card2);border:2px dashed var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;cursor:pointer;margin-bottom:8px;overflow:hidden;" onclick="document.getElementById('facImgInput').click()">
+      <span style="color:var(--muted2);font-size:13px;">📷 Rasm tanlash</span>
+    </div>
+    <input type="file" id="facImgInput" accept="image/*" style="display:none" onchange="previewFacImg(this)">
+    <button class="btn-save" onclick="saveFacility()">💾 Saqlash</button>
+    <button class="btn-rf-cancel" onclick="closeFacForm()">Bekor qilish</button>
+  </div>
+</div>
 
 <div id="adminBronModal" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);align-items:flex-end;justify-content:center;">
   <div style="background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:500px;border-top:1px solid var(--border);max-height:90vh;overflow-y:auto;">
@@ -1132,6 +1192,7 @@ async function persistAll(){
   await _saveData('rc_food', food);
   await _saveData('rc_finance', finance);
   await _saveData('rc_buildings', buildings);
+  await _saveData('rc_facilities', facilities);
   await _saveData('rc_ts', Date.now());
   const ss=document.getElementById('syncStatus');
   if(ss)ss.textContent='Sinxronlandi ✅';
@@ -1186,6 +1247,21 @@ function mergeImgsIntoRooms(){
   }catch(e){}
 }
 
+function getDefaultFacilities(){
+  return [
+    {id:'f01',icon:'🏥',name:'24/7 Hamshira xizmati',desc:'Kecha-kunduz tibbiy yordam va doimiy kuzatuv.',cat:'tibbiy',img:null},
+    {id:'f02',icon:'⚡',name:'Fizioterapiya',desc:'Elektroforez, UHF, magnit terapiya, lazer terapiya.',cat:'tibbiy',img:null},
+    {id:'f03',icon:'🔬',name:'Laboratoriya',desc:'Zamonaviy uskunalar bilan jihozlangan laboratoriya.',cat:'tibbiy',img:null},
+    {id:'f04',icon:'🍽️',name:'Dietali ovqatlanish',desc:'Kuniga 3 mahal issiq ovqat. Dietolog menyusi.',cat:'tibbiy',img:null},
+    {id:'f05',icon:'🏊',name:'Jakuziy',desc:'Har kuni 17:00–21:00. Gidromasaj vannasi.',cat:'dam',img:null},
+    {id:'f06',icon:'🌿',name:'Yashil bog\'',desc:'Ochiq havoda dam olish uchun qulay maydon.',cat:'dam',img:null},
+    {id:'f07',icon:'❄️',name:'Konditsioner',desc:'Barcha xonalarda zamonaviy konditsioner.',cat:'xona',img:null},
+    {id:'f08',icon:'🚿',name:'Shaxsiy hojatxona',desc:'2 kishilik xonalarda alohida hojatxona.',cat:'xona',img:null},
+    {id:'f09',icon:'🛏️',name:'Qulay to\'shak',desc:'Ortopedik matras, har kuni yangilanadi.',cat:'xona',img:null},
+    {id:'f10',icon:'🧹',name:'Kunlik tozalash',desc:'Har kuni xonani tozalash va dezinfeksiya.',cat:'xona',img:null},
+  ];
+}
+
 function getDefaultBuildings(){
   return [
     {id:'bA',name:'A blok',desc:'Asosiy bino',floors:2,icon:'🏥'},
@@ -1216,6 +1292,7 @@ async function loadAllData(){
   food     = _loadData('rc_food',     null) || getDefaultFood();
   finance  = _loadData('rc_finance',  []);
   buildings= _loadData('rc_buildings',null) || getDefaultBuildings();
+  facilities= _loadData('rc_facilities',null) || getDefaultFacilities();
   if(!rooms.length){
     rooms=getDefaultRooms();bookings=[];clients=[];patients=[];
     food=getDefaultFood();finance=[];buildings=getDefaultBuildings();
@@ -1267,13 +1344,14 @@ function hideLoading(){document.getElementById('loadingOverlay').style.display='
 
 function goSlide(idx){
   currentSlide=idx;
-  document.getElementById('slidesTrack').style.transform='translateX(-'+idx*100+'vw)';
+  var st=document.getElementById('slidesTrack'); if(st)st.style.transform='translateX(-'+idx*100+'vw)';
   var items=document.querySelectorAll('.bnav-item');
-  items.forEach((b,i)=>b.classList.toggle('active',i===idx));
+  if(items) items.forEach(function(b,i){if(b)b.classList.toggle('active',i===idx);});
 
   if(idx===0){renderHomeInfo();renderAlerts();}
   if(idx===1)renderAllRooms();
   if(idx===3)renderPublicFood();
+  if(idx===4)renderFacilities();
   if(idx===5)renderMyBookings();
 }
 
@@ -1287,15 +1365,8 @@ function switchPriceCat(cat,el){
   });
 }
 
-// Qulaylik kategoriyalar
-function switchAmCat(cat,el){
-  document.querySelectorAll('.am-cat-tab').forEach(t=>t.classList.remove('am-cat-active'));
-  el.classList.add('am-cat-active');
-  ['tibbiy','dam','xona'].forEach(c=>{
-    var s=document.getElementById('amcat-'+c);
-    if(s)s.style.display=c===cat?'block':'none';
-  });
-}
+// Sharoit kategoriyalar
+function switchAmCat(cat,el){ switchFacCat(cat,el); }
 
 // Litsenziya kategoriyalar
 function switchLicCat(cat,el){
@@ -1789,9 +1860,11 @@ function sendSmsToWait(phone,name,roomNum){
 function callWait(phone){window.open('tel:'+phone);}
 
 function showAdminPage(page,el){
-  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.abn-item,.sb-item').forEach(i=>i.classList.remove('active'));
-  document.getElementById('admin'+page).classList.add('active');el.classList.add('active');
+  document.querySelectorAll('.admin-page').forEach(function(p){if(p)p.classList.remove('active');});
+  document.querySelectorAll('.abn-item,.sb-item').forEach(function(i){if(i)i.classList.remove('active');});
+  var pg=document.getElementById('admin'+page);
+  if(pg)pg.classList.add('active');
+  if(el)el.classList.add('active');
   if(page==='Dashboard')renderAdminDashboard();
   if(page==='Rooms')renderAdminRoomsMgmt();
   if(page==='Patients')renderPatients();
@@ -1821,6 +1894,154 @@ function renderAdminDashboard(){
 }
 
 function renderAdminBookings(){renderBTable('allBookingsTable',[...bookings].reverse());}
+
+// ════════════════════════════════════════
+// ADMIN BRONLAR BO'LIMI
+// ════════════════════════════════════════
+function renderAdminBookings(){
+  // Mijozlar select ni to'ldirish
+  var csel = document.getElementById('nb_client');
+  if(csel){
+    csel.innerHTML = '<option value="">— Mijoz tanlang —</option>';
+    clients.forEach(function(c){
+      var opt = document.createElement('option');
+      opt.value = c.id; opt.textContent = c.name + ' (' + c.phone + ')';
+      csel.appendChild(opt);
+    });
+    patients.forEach(function(p){
+      var fullName = p.name + ' ' + p.surname;
+      var opt = document.createElement('option');
+      opt.value = 'pat_' + p.id;
+      opt.textContent = fullName + ' (bemor)';
+      csel.appendChild(opt);
+    });
+  }
+  // Xonalar select ni to'ldirish
+  var rsel = document.getElementById('nb_room');
+  if(rsel){
+    rsel.innerHTML = '<option value="">— Xona tanlang —</option>';
+    rooms.forEach(function(r){
+      var opt = document.createElement('option');
+      opt.value = r.id;
+      var stTxt = r.status==='bosh' ? '🟢 Bo\'sh' : r.status==='band' ? '🔴 Band' : '🟡 Yaqinda';
+      opt.textContent = 'Xona №' + r.num + ' (' + r.type + ' kishi) — ' + stTxt;
+      if(r.status==='band') opt.style.color = '#888';
+      rsel.appendChild(opt);
+    });
+  }
+  // Sana default
+  var ns = document.getElementById('nb_start');
+  if(ns && !ns.value) ns.value = new Date().toISOString().split('T')[0];
+
+  renderBronAnalytics();
+  renderBTable('allBookingsTable', [...bookings].reverse());
+}
+
+function nbCalcCost(){
+  var rId = document.getElementById('nb_room').value;
+  var s = document.getElementById('nb_start').value;
+  var e = document.getElementById('nb_end').value;
+  var costEl = document.getElementById('nb_cost');
+  if(!rId || !s || !e){ if(costEl) costEl.style.display='none'; return; }
+  var r = rooms.find(function(x){ return x.id===rId; });
+  if(!r){ if(costEl) costEl.style.display='none'; return; }
+  var days = Math.round((new Date(e) - new Date(s)) / 864e5);
+  if(days <= 0){ if(costEl) costEl.style.display='none'; return; }
+  var total = days * r.price * r.type;
+  if(costEl){
+    costEl.textContent = days + ' kun × ' + fp(r.price) + '/kishi × ' + r.type + ' kishi = ' + fp(total);
+    costEl.style.display = 'block';
+  }
+}
+
+async function nbSave(){
+  var cId = document.getElementById('nb_client').value;
+  var rId = document.getElementById('nb_room').value;
+  var start = document.getElementById('nb_start').value;
+  var end = document.getElementById('nb_end').value;
+
+  if(!cId){ showToast('Mijoz tanlang!','⚠️'); return; }
+  if(!rId){ showToast('Xona tanlang!','⚠️'); return; }
+  if(!start || !end){ showToast('Sanalarni kiriting!','⚠️'); return; }
+  var days = Math.round((new Date(end) - new Date(start)) / 864e5);
+  if(days <= 0){ showToast('Chiqish sanasi kirish sanasidan keyin bo\'lsin!','⚠️'); return; }
+
+  var r = rooms.find(function(x){ return x.id===rId; });
+  if(!r){ showToast('Xona topilmadi!','⚠️'); return; }
+
+  // Mijoz nomini aniqlash
+  var clientName = '';
+  if(cId.startsWith('pat_')){
+    var p = patients.find(function(x){ return x.id===cId.replace('pat_',''); });
+    clientName = p ? p.name + ' ' + p.surname : 'Bemor';
+  } else {
+    var c = clients.find(function(x){ return x.id===cId; });
+    clientName = c ? c.name : 'Mijoz';
+  }
+
+  var total = days * r.price * r.type;
+  var bron = {
+    id: uid(), roomId: r.id, roomNum: r.num, roomType: r.type,
+    client: clientName, phone: '', start: start, end: end,
+    days: days, total: total, status: 'confirmed',
+    createdAt: Date.now(), byAdmin: true
+  };
+  bookings.push(bron);
+
+  // Xonani band qilish
+  r.status = 'band'; r.checkoutDate = end;
+
+  // Moliyaga qo'shish
+  finance.push({
+    id: uid(), type: 'kirim', amount: total,
+    desc: 'Bron: ' + clientName + ' — Xona №' + r.num + ' (' + days + ' kun)',
+    date: new Date().toISOString().split('T')[0],
+    bookingId: bron.id
+  });
+
+  // Formani tozalash
+  document.getElementById('nb_client').value = '';
+  document.getElementById('nb_room').value = '';
+  document.getElementById('nb_end').value = '';
+  var costEl = document.getElementById('nb_cost');
+  if(costEl) costEl.style.display = 'none';
+
+  renderAdminBookings();
+  renderAdminRoomsMgmt();
+  renderHomeInfo();
+  showToast('✅ ' + clientName + ' — Xona №' + r.num + ' bronlandi!','📋');
+  await persistAll();
+}
+
+function renderBronAnalytics(){
+  var el = document.getElementById('bronAnalytics');
+  if(!el) return;
+  var now = new Date(); now.setHours(0,0,0,0);
+  var active = bookings.filter(function(b){ return new Date(b.end)>=now && new Date(b.start)<=now; }).length;
+  var upcoming = bookings.filter(function(b){ return new Date(b.start)>now; }).length;
+  var expired = bookings.filter(function(b){ return new Date(b.end)<now; }).length;
+  var totalSum = bookings.reduce(function(s,b){ return s+(b.total||0); }, 0);
+  var thisMonth = new Date().getMonth();
+  var thisYear = new Date().getFullYear();
+  var monthly = bookings.filter(function(b){
+    var d=new Date(b.start); return d.getMonth()===thisMonth && d.getFullYear()===thisYear;
+  }).length;
+
+  var items = [
+    ['🟢 Faol', active, 'var(--accent2)'],
+    ['⏳ Kutilmoqda', upcoming, 'var(--gold)'],
+    ['✅ Tugagan', expired, 'var(--muted2)'],
+    ['📅 Bu oy', monthly, 'var(--accent)'],
+    ['💰 Jami', fp(totalSum), 'var(--accent2)'],
+    ['📊 Hammasi', bookings.length, 'var(--white)'],
+  ];
+  el.innerHTML = items.map(function(item){
+    return '<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;">'
+      + '<div style="font-size:18px;font-weight:900;color:'+item[2]+';">'+item[1]+'</div>'
+      + '<div style="font-size:10px;color:var(--muted2);margin-top:3px;">'+item[0]+'</div>'
+      + '</div>';
+  }).join('');
+}
 
 function renderBTable(id,data){
   const el=document.getElementById(id);if(!el)return;
@@ -2067,7 +2288,7 @@ document.addEventListener('DOMContentLoaded',function(){
   // 1) AVVAL session tekshir — tezda ko'rsatish
   try{
     const s = loadSession();
-    if(s && s.a){ showScreen('adminScreen'); }
+    if(s && s.a){ showScreen('adminScreen'); try{renderAdminDashboard();}catch(e){} }
     else if(s && s.u){ currentUser=s.u; enterMain(s.u.name.split(' ')[0]); }
     else{ showScreen('loginScreen'); }
   }catch(e){ showScreen('loginScreen'); }
@@ -2086,11 +2307,13 @@ document.addEventListener('DOMContentLoaded',function(){
     food     = _loadData('rc_food',     null) || getDefaultFood();
     finance  = _loadData('rc_finance',  []);
     buildings= _loadData('rc_buildings',null) || getDefaultBuildings();
+  facilities= _loadData('rc_facilities',null) || getDefaultFacilities();
   }catch(e){}
 
   // 3) UI ni yangilash
   try{ updateBuildingSelect(); }catch(e){}
   try{ renderHomeInfo(); renderAlerts(); renderAllRooms(); }catch(e){}
+  try{ renderFacilities(); }catch(e){}
   try{ renderPublicFood(); }catch(e){}
 
   // 4) Fon da serverdan yangilash
@@ -2629,6 +2852,167 @@ async function delPatient(id){
 }
 
 
+
+// ════════════════════════════════════════
+// SHAROITLAR (FACILITIES)
+// ════════════════════════════════════════
+let _curFacCat = 'tibbiy';
+
+const FAC_CATS = [
+  {id:'tibbiy', label:'🏥 Tibbiy'},
+  {id:'dam',    label:'🏊 Dam olish'},
+  {id:'xona',   label:'🛏️ Xona'},
+];
+
+function renderFacilities(){
+  // Kategoriya tablar
+  const tabs = document.getElementById('facCatTabs');
+  if(tabs){
+    tabs.innerHTML = FAC_CATS.map(function(c){
+      var active = c.id===_curFacCat ? " am-cat-active" : "";
+      return '<div class="am-cat-tab'+active+'" onclick="switchFacCat(&quot;'+c.id+'&quot;,this)">'+c.label+'</div>';
+    }).join("");
+  }
+  renderFacList();
+}
+
+function switchFacCat(cat, el){
+  _curFacCat = cat;
+  document.querySelectorAll('#facCatTabs .am-cat-tab').forEach(t=>t.classList.remove('am-cat-active'));
+  if(el) el.classList.add('am-cat-active');
+  renderFacList();
+}
+
+function renderFacList(){
+  const el = document.getElementById('facList');
+  if(!el) return;
+  const list = (facilities||[]).filter(f=>f.cat===_curFacCat);
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;padding:40px;color:var(--muted2);">Bu kategoriyada sharoit yo\'q</div>';
+    return;
+  }
+  el.innerHTML = list.map(f=>`
+    <div class="am-detail-card" style="padding:0;overflow:hidden;flex-direction:column;gap:0;">
+      ${f.img ? '<img src="'+f.img+'" style="width:100%;height:160px;object-fit:cover;">' : ''}
+      <div style="display:flex;gap:14px;padding:14px 16px;align-items:flex-start;">
+        <div class="am-dc-icon">${f.icon||'🏥'}</div>
+        <div class="am-dc-body">
+          <div class="am-dc-name">${f.name}</div>
+          <div class="am-dc-desc">${f.desc||''}</div>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// ── Admin: Sharoitlar ro'yxati ──
+function renderAdminFacilities(){
+  const el = document.getElementById('adminFacList');
+  if(!el) return;
+  if(!facilities||!facilities.length){
+    el.innerHTML='<div style="color:var(--muted2);text-align:center;padding:30px;">Sharoitlar yo\'q</div>';
+    return;
+  }
+  el.innerHTML = (facilities||[]).map(f=>`
+    <div style="background:var(--card2);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;">
+      ${f.img?'<img src="'+f.img+'" style="width:100%;height:100px;object-fit:cover;">':''}
+      <div style="padding:12px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <div style="display:flex;align-items:center;gap:10px;flex:1;">
+          <span style="font-size:22px;">${f.icon||'🏥'}</span>
+          <div>
+            <div style="font-size:13px;font-weight:800;color:var(--white);">${f.name}</div>
+            <div style="font-size:11px;color:var(--muted2);">${FAC_CATS.find(c=>c.id===f.cat)?.label||f.cat}</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button onclick="openFacForm('${f.id}')" style="background:rgba(139,92,246,0.1);border:1px solid rgba(139,92,246,0.2);color:#a78bfa;padding:6px 10px;border-radius:8px;font-size:11px;cursor:pointer;">✏️</button>
+          <button onclick="delFacility('${f.id}')" style="background:rgba(255,64,96,0.08);border:1px solid rgba(255,64,96,0.15);color:var(--danger);padding:6px 10px;border-radius:8px;font-size:11px;cursor:pointer;">🗑</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openFacForm(id){
+  const f = id ? facilities.find(x=>x.id===id) : null;
+  document.getElementById('facId').value = f?f.id:'';
+  document.getElementById('facFormTitle').textContent = f?'Sharoitni tahrirlash':'Yangi sharoit';
+  document.getElementById('facIcon').value = f?f.icon:'';
+  document.getElementById('facName').value = f?f.name:'';
+  document.getElementById('facDesc').value = f?f.desc:'';
+  document.getElementById('facCat').value = f?f.cat:'tibbiy';
+  const prev = document.getElementById('facImgPreview');
+  if(f&&f.img){
+    prev.innerHTML = '<img src="'+f.img+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">';
+  } else {
+    prev.innerHTML = '<span style="color:var(--muted2);font-size:13px;">📷 Rasm tanlash</span>';
+  }
+  document.getElementById('facImgInput').value='';
+  document.getElementById('facFormModal').classList.add('open');
+}
+
+function closeFacForm(){
+  document.getElementById('facFormModal').classList.remove('open');
+}
+
+function previewFacImg(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      const MAX=800; let w=img.width, h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      const data=c.toDataURL('image/jpeg',0.6);
+      document.getElementById('facImgPreview').innerHTML='<img src="'+data+'" style="width:100%;height:100%;object-fit:cover;border-radius:12px;">';
+      document.getElementById('facImgInput').dataset.base64=data;
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveFacility(){
+  const id = document.getElementById('facId').value;
+  const icon = document.getElementById('facIcon').value.trim()||'🏥';
+  const name = document.getElementById('facName').value.trim();
+  const desc = document.getElementById('facDesc').value.trim();
+  const cat  = document.getElementById('facCat').value;
+  if(!name){showToast('Nomi kiriting!','⚠️');return;}
+
+  const imgInput = document.getElementById('facImgInput');
+  let img = null;
+  if(imgInput.dataset.base64){
+    img = imgInput.dataset.base64;
+    imgInput.dataset.base64='';
+  } else if(id){
+    const old = facilities.find(x=>x.id===id);
+    img = old?old.img:null;
+  }
+
+  if(id){
+    const idx = facilities.findIndex(x=>x.id===id);
+    if(idx>=0) facilities[idx]={id,icon,name,desc,cat,img};
+  } else {
+    facilities.push({id:uid(),icon,name,desc,cat,img});
+  }
+  closeFacForm();
+  renderAdminFacilities();
+  showToast('Sharoit saqlandi ✅','🏨');
+  await persistAll();
+}
+
+async function delFacility(id){
+  if(!confirm('Sharoitni o\'chirish?')) return;
+  facilities = facilities.filter(x=>x.id!==id);
+  renderAdminFacilities();
+  showToast('O\'chirildi','🗑️');
+  await persistAll();
+}
 
 </script>
 </body>
