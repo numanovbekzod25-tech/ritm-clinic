@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>RITM CLINIC — Statsionar</title>
+<meta name="description" content="RITM CLINIC — Zamonaviy statsionar xona bron qilish tizimi">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#040a14;--card:#070f1d;--card2:#0a1525;
+  --border:rgba(0,180,200,0.1);--accent:#00b4c8;--accent2:#00e5a0;
+  --gold:#f0a500;--danger:#ff4060;--warn:#f59e0b;
+  --text:#b8d4f0;--white:#e8f4ff;--muted:#2a4060;--muted2:#4a6080;
+  --nh:60px;--bn:68px;--tn:72px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;color-scheme:dark;}
+input,select,textarea,button{color-scheme:dark;-webkit-appearance:none;appearance:none;font-family:'DM Sans',sans-serif;}
+input:-webkit-autofill,input:-webkit-autofill:hover,input:-webkit-autofill:focus{-webkit-box-shadow:0 0 0 60px #050d1a inset!important;-webkit-text-fill-color:var(--text)!important;}
+select option{background:#07101f!important;color:var(--text)!important;}
+input[type="date"]::-webkit-calendar-picker-indicator{filter:invert(0.6) sepia(1) hue-rotate(160deg);cursor:pointer;}
+body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(circle,rgba(0,180,200,0.025) 1px,transparent 1px);background-size:28px 28px;}
+body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;background:radial-gradient(ellipse at 15% 0%,rgba(0,180,200,0.07) 0%,transparent 50%),radial-gradient(ellipse at 85% 100%,rgba(0,229,160,0.05) 0%,transparent 50%);}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+@keyframes hb{0%,100%{transform:scale(1)}14%{transform:scale(1.2)}28%{transform:scale(1)}}
+@keyframes gridScroll{from{background-position:0 0}to{background-position:0 40px}}
+@keyframes scanLine{0%{top:-2px;opacity:0.6}100%{top:102%;opacity:0}}
+@keyframes ecg{from{stroke-dashoffset:220}to{stroke-dashoffset:0}}
+.screen{display:none;position:fixed;inset:0;z-index:1;}
+.screen.active{display:flex;flex-direction:column;}
+#loginScreen{background:var(--bg);overflow:hidden;flex-direction:column;}
+.lhero{flex:0 0 auto;background:linear-gradient(180deg,#020810 0%,#040e1c 100%);position:relative;overflow:hidden;padding:32px 24px 20px;border-bottom:1px solid var(--border);}
+.lhero-grid{position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(0,180,200,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,180,200,0.04) 1px,transparent 1px);background-size:32px 32px;animation:gridScroll 4s linear infinite;}
+.lhero-scan{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(0,180,200,0.4),transparent);animation:scanLine 3s linear infinite;}
+.lhero-cross{position:absolute;font-size:13px;color:rgba(0,180,200,0.18);animation:pulse 3s ease-in-out infinite;}
+.lhero-cross:nth-child(3){top:15%;left:8%;}
+.lhero-cross:nth-child(4){top:60%;left:80%;animation-delay:1s;}
+.lhero-cross:nth-child(5){top:35%;left:55%;animation-delay:0.5s;}
+.lhero-cross:nth-child(6){top:75%;left:30%;animation-delay:1.5s;}
+.logo-wrap{display:flex;align-items:center;gap:14px;margin-bottom:18px;position:relative;z-index:1;}
+.logo-icon{width:52px;height:52px;background:linear-gradient(135deg,#00b4c8,#007a8a);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;font-family:'Playfair Display',serif;box-shadow:0 0 24px rgba(0,180,200,0.3);}
+.logo-text h1{font-family:'Playfair Display',serif;font-size:22px;color:var(--white);font-weight:800;letter-spacing:-0.3px;}
+.logo-text p{font-size:11px;color:var(--accent);font-weight:600;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;}
+.lhero-stats{display:flex;gap:10px;margin-bottom:14px;position:relative;z-index:1;}
+.lhero-stat{flex:1;background:rgba(0,180,200,0.06);border:1px solid var(--border);border-radius:12px;padding:10px 8px;text-align:center;}
+.lhero-stat-num{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;}
+.lhero-stat-lbl{font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.lhero-ecg{position:relative;z-index:1;height:28px;}
+.lhero-ecg svg{width:100%;height:28px;}
+.lhero-ecg-path{fill:none;stroke:url(#ecgG);stroke-width:1.5;stroke-linecap:round;stroke-dasharray:220;stroke-dashoffset:220;animation:ecg 2.2s ease forwards 0.4s;}
+.lsheet{flex:1;overflow-y:auto;padding:24px 20px;background:var(--bg);}
+.ltabs{display:flex;background:var(--card2);border:1px solid var(--border);border-radius:14px;padding:4px;gap:4px;margin-bottom:20px;}
+.ltab{flex:1;text-align:center;padding:10px 6px;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;color:var(--muted2);transition:all 0.2s;letter-spacing:0.3px;}
+.ltab.active{background:linear-gradient(135deg,rgba(0,180,200,0.2),rgba(0,180,200,0.08));color:var(--accent);border:1px solid rgba(0,180,200,0.2);}
+.fhead{margin-bottom:18px;}
+.fhead h2{font-family:'Playfair Display',serif;font-size:20px;color:var(--white);font-weight:700;margin-bottom:4px;}
+.fhead p{font-size:12px;color:var(--muted2);}
+.fg{margin-bottom:12px;}
+.iw{position:relative;display:flex;align-items:center;}
+.ii{position:absolute;left:14px;font-size:14px;z-index:1;pointer-events:none;}
+.iw input,.iw select{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:13px 14px 13px 40px;font-size:14px;color:var(--text);outline:none;transition:border 0.2s;}
+.iw input:focus,.iw select:focus{border-color:rgba(0,180,200,0.4);}
+.frow2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.btn-login{width:100%;padding:14px;background:linear-gradient(135deg,#00b4c8,#007a8a);border:none;border-radius:14px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;letter-spacing:0.3px;margin-top:4px;box-shadow:0 4px 20px rgba(0,180,200,0.25);}
+.l-err{color:var(--danger);font-size:12px;font-weight:600;margin-top:8px;display:none;text-align:center;}
+.app-header{height:var(--nh);background:rgba(4,10,20,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;z-index:10;position:relative;}
+.ah-logo{display:flex;align-items:center;gap:10px;}
+.ah-logo-icon{width:34px;height:34px;background:linear-gradient(135deg,#00b4c8,#007a8a);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:#fff;}
+.ah-logo-text h2{font-family:'Playfair Display',serif;font-size:15px;color:var(--white);font-weight:800;line-height:1;}
+.ah-logo-text span{font-size:10px;color:var(--accent);font-weight:600;letter-spacing:1px;text-transform:uppercase;}
+.ah-right{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.user-chip{display:flex;align-items:center;gap:7px;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:5px 12px 5px 5px;}
+.user-av{width:26px;height:26px;background:linear-gradient(135deg,#00b4c8,#007a8a);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;}
+.user-chip span{font-size:12px;font-weight:700;color:var(--white);}
+.btn-out{background:rgba(255,64,96,0.1);border:1px solid rgba(255,64,96,0.2);color:var(--danger);border-radius:10px;padding:6px 10px;font-size:13px;cursor:pointer;}
+.slides-wrap{flex:1;overflow:hidden;position:relative;min-height:0;}
+.slides-track{display:flex;width:600vw;height:100%;transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);}
+.slide{width:100vw;height:100%;overflow-y:auto;padding:16px 16px 24px;}
+.slide::-webkit-scrollbar{display:none;}
+.bnav{width:100%;background:rgba(4,10,20,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;flex-shrink:0;height:var(--tn);}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;cursor:pointer;transition:all 0.2s;height:100%;position:relative;padding:0 2px;}
+.bnav-item .bi{font-size:20px;transition:transform 0.2s;line-height:1;}
+.bnav-item .bl{font-size:9px;font-weight:700;color:var(--muted2);white-space:nowrap;letter-spacing:0;}
+.bnav-item.active .bl{color:var(--accent);}
+.bnav-item.active .bi{transform:translateY(-2px);}
+.bnav-item.active::after{content:'';position:absolute;bottom:0;left:15%;right:15%;height:3px;background:var(--accent);border-radius:3px 3px 0 0;}
+.hero{text-align:center;padding:24px 0 20px;position:relative;}
+.hero-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(0,180,200,0.08);border:1px solid rgba(0,180,200,0.18);border-radius:20px;padding:5px 14px;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:1px;text-transform:uppercase;margin-bottom:14px;}
+.hero-dot{width:6px;height:6px;background:var(--accent2);border-radius:50%;animation:pulse 1.6s ease-in-out infinite;}
+.hero h1{font-family:'Playfair Display',serif;font-size:26px;color:var(--white);font-weight:800;line-height:1.25;margin-bottom:10px;letter-spacing:-0.5px;}
+.hero h1 em{font-style:italic;color:var(--accent);}
+.hero p{font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:18px;}
+.hero-stats{display:flex;justify-content:center;}
+.hstat{padding:10px 18px;text-align:center;border-right:1px solid var(--border);}
+.hstat:last-child{border:none;}
+.hstat-num{font-family:'Playfair Display',serif;font-size:20px;color:var(--white);font-weight:800;}
+.hstat-lbl{font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;}
+.sec-title{font-family:'Playfair Display',serif;font-size:16px;color:var(--white);font-weight:700;margin-bottom:12px;margin-top:20px;}
+.info-strip{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:16px;}
+.ic{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 10px;text-align:center;}
+.ic-icon{font-size:20px;margin-bottom:4px;}
+.ic-val{font-family:'Playfair Display',serif;font-size:22px;color:var(--white);font-weight:800;}
+.ic-lbl{font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:0.3px;}
+.ic.blue{border-color:rgba(0,180,200,0.2);}
+.ic.green{border-color:rgba(0,229,160,0.2);}
+.ic.red{border-color:rgba(255,64,96,0.2);}
+.announce{background:linear-gradient(135deg,rgba(0,180,200,0.07),rgba(0,180,200,0.03));border:1px solid rgba(0,180,200,0.14);border-radius:18px;padding:16px;margin-bottom:4px;}
+.announce-tag{display:inline-block;background:rgba(0,229,160,0.1);color:var(--accent2);font-size:10px;font-weight:800;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px;border:1px solid rgba(0,229,160,0.2);margin-bottom:8px;}
+.announce h3{font-family:'Playfair Display',serif;font-size:15px;color:var(--white);font-weight:700;margin-bottom:5px;}
+.announce p{font-size:12px;color:var(--muted2);line-height:1.6;}
+.price-table{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:4px;}
+.pt-header{background:linear-gradient(135deg,rgba(0,180,200,0.12),rgba(0,180,200,0.05));padding:14px 16px;border-bottom:1px solid var(--border);}
+.pt-header-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--white);font-weight:700;}
+.pt-row{display:flex;align-items:center;padding:12px 16px;border-bottom:1px solid var(--border);}
+.pt-row:last-child{border:none;}
+.pt-icon{font-size:18px;width:32px;flex-shrink:0;}
+.pt-info{flex:1;}
+.pt-name{font-size:13px;font-weight:700;color:var(--white);}
+.pt-desc{font-size:11px;color:var(--muted2);margin-top:1px;}
+.pt-price{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--accent);text-align:right;}
+.pt-price small{font-size:10px;color:var(--muted2);display:block;font-family:'DM Sans',sans-serif;font-weight:500;}
+.week-table{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:4px;}
+.wt-header{background:linear-gradient(135deg,rgba(0,229,160,0.1),rgba(0,229,160,0.03));padding:14px 16px;border-bottom:1px solid var(--border);}
+.wt-title{font-family:'Playfair Display',serif;font-size:14px;color:var(--white);font-weight:700;}
+.wt-row{display:grid;grid-template-columns:90px 1fr 1fr 1fr;border-bottom:1px solid rgba(0,180,200,0.05);}
+.wt-row:last-child{border:none;}
+.wt-row.head{background:rgba(0,180,200,0.04);}
+.wt-cell{padding:10px 10px;font-size:11px;font-weight:600;color:var(--muted2);border-right:1px solid rgba(0,180,200,0.05);}
+.wt-cell:last-child{border:none;}
+.wt-row.head .wt-cell{color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;}
+.wt-cell.day{color:var(--white);font-weight:700;}
+.alert-banner{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.16);border-radius:14px;padding:12px 14px;margin-bottom:10px;display:flex;align-items:center;gap:10px;}
+.alert-icon{font-size:18px;}
+.alert-title{font-size:12px;font-weight:800;color:var(--warn);}
+.alert-desc{font-size:11px;color:rgba(245,158,11,0.5);margin-top:2px;}
+.amenities-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px;}
+.am-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;display:flex;align-items:center;gap:10px;}
+.am-icon{font-size:22px;flex-shrink:0;}
+.am-name{font-size:12px;font-weight:700;color:var(--white);}
+.am-desc{font-size:10px;color:var(--muted2);margin-top:1px;}
+.lic-list{display:flex;flex-direction:column;gap:8px;}
+.lic-item{background:var(--card);border:1px solid rgba(0,229,160,0.12);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;transition:all 0.25s;}
+.lic-collapsible{cursor:pointer;align-items:flex-start;}
+.lic-collapsible:hover{border-color:rgba(0,229,160,0.3);background:rgba(0,229,160,0.03);}
+.lic-icon{width:36px;height:36px;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.18);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.lic-text{flex:1;}
+.lic-name{font-size:12px;font-weight:800;color:var(--white);}
+.lic-num{font-size:10px;color:var(--muted2);margin-top:1px;}
+.lic-detail{font-size:11px;color:var(--muted2);margin-top:8px;line-height:1.6;display:none;border-top:1px solid var(--border);padding-top:8px;}
+.lic-item.expanded .lic-detail{display:block;}
+.lic-right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.lic-badge{background:rgba(0,229,160,0.1);color:var(--accent2);font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;}
+.lic-chevron{font-size:16px;color:var(--muted2);transition:transform 0.25s;line-height:1;}
+.lic-item.expanded .lic-chevron{transform:rotate(90deg);}
+/* ── QUICK NAV ── */
+.quick-nav-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px;}
+.qn-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;transition:all 0.2s;position:relative;}
+.qn-card:active{transform:scale(0.96);}
+.qn-icon{font-size:24px;}
+.qn-label{font-size:11px;font-weight:700;color:var(--text);text-align:center;}
+.qn-arrow{position:absolute;top:8px;right:10px;font-size:14px;color:var(--muted2);}
+/* ── SLIDE PAGE TITLE ── */
+.slide-page-title{font-family:'Playfair Display',serif;font-size:20px;color:var(--white);font-weight:800;margin-bottom:14px;}
+/* ── PRICE CARDS ── */
+.price-cat-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.pct{flex:1;text-align:center;padding:9px 6px;background:var(--card2);border:1px solid var(--border);border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted2);}
+.pct.active{background:rgba(0,180,200,0.12);border-color:rgba(0,180,200,0.3);color:var(--accent);}
+.price-room-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:18px;margin-bottom:12px;}
+.price-room-card.prc-premium{border-color:rgba(240,165,0,0.25);background:linear-gradient(160deg,var(--card),rgba(240,165,0,0.03));}
+.prc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;}
+.prc-icon{font-size:28px;}
+.prc-badge{background:rgba(0,229,160,0.1);color:var(--accent2);font-size:10px;font-weight:800;padding:4px 10px;border-radius:10px;border:1px solid rgba(0,229,160,0.2);}
+.prc-badge-gold{background:rgba(240,165,0,0.1);color:var(--gold);border-color:rgba(240,165,0,0.25);}
+.prc-name{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:4px;}
+.prc-desc{font-size:11px;color:var(--muted2);margin-bottom:12px;}
+.prc-price-row{display:flex;align-items:baseline;gap:8px;margin-bottom:12px;}
+.prc-price{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);font-weight:800;}
+.prc-price span{font-size:12px;color:var(--muted2);font-weight:400;}
+.prc-gold{color:var(--gold)!important;}
+.prc-per{font-size:11px;color:var(--muted2);}
+.prc-features{display:flex;flex-wrap:wrap;gap:6px;}
+.prc-features span{background:rgba(0,180,200,0.08);border:1px solid rgba(0,180,200,0.15);color:var(--accent);font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;}
+/* ── INCLUDED / EXTRA CARDS ── */
+.inc-info-banner{background:rgba(0,229,160,0.07);border:1px solid rgba(0,229,160,0.18);border-radius:12px;padding:10px 14px;font-size:11px;font-weight:700;color:var(--accent2);margin-bottom:12px;text-align:center;}
+.extra-banner{background:rgba(245,158,11,0.07);border-color:rgba(245,158,11,0.2);color:var(--warn);}
+.inc-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+.extra-card{border-color:rgba(245,158,11,0.15);}
+.inc-icon{font-size:22px;width:38px;text-align:center;flex-shrink:0;}
+.inc-body{flex:1;}
+.inc-name{font-size:13px;font-weight:700;color:var(--white);}
+.inc-desc{font-size:11px;color:var(--muted2);margin-top:2px;}
+.inc-tag{background:rgba(0,229,160,0.1);color:var(--accent2);font-size:10px;font-weight:800;padding:4px 10px;border-radius:10px;white-space:nowrap;flex-shrink:0;}
+.extra-tag{background:rgba(245,158,11,0.1);color:var(--warn);}
+/* ── AMENITY DETAIL CARDS ── */
+.am-cat-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.am-cat-tab{flex:1;text-align:center;padding:9px 4px;background:var(--card2);border:1px solid var(--border);border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted2);}
+.am-cat-tab.am-cat-active{background:rgba(0,180,200,0.12);border-color:rgba(0,180,200,0.3);color:var(--accent);}
+.am-detail-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px 16px;display:flex;gap:14px;margin-bottom:10px;align-items:flex-start;}
+.am-dc-icon{font-size:26px;flex-shrink:0;width:38px;text-align:center;}
+.am-dc-body{flex:1;}
+.am-dc-name{font-size:13px;font-weight:800;color:var(--white);margin-bottom:4px;}
+.am-dc-desc{font-size:12px;color:var(--muted2);line-height:1.5;}
+/* ── LICENSE CAT TABS ── */
+.lic-cat-tabs{display:flex;gap:6px;margin-bottom:14px;}
+.lct{flex:1;text-align:center;padding:9px 4px;background:var(--card2);border:1px solid var(--border);border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted2);}
+.lct.active{background:rgba(0,229,160,0.1);border-color:rgba(0,229,160,0.25);color:var(--accent2);}
+/* ── BNAV 7 items ── */
+
+
+.food-cat-tab{padding:7px 12px;background:var(--card2);border:1px solid var(--border);border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted2);}
+.food-cat-tab.fct-active{background:rgba(0,180,200,0.12);border-color:rgba(0,180,200,0.25);color:var(--accent);}
+.wt-cat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;}
+.wt-cat-header{padding:10px 14px;background:rgba(0,180,200,0.05);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.wt-cat-title{font-size:13px;font-weight:800;color:var(--white);}
+.wt-cat-row{display:flex;align-items:center;padding:9px 14px;border-bottom:1px solid rgba(255,255,255,0.03);}
+.wt-cat-row:last-child{border-bottom:none;}
+.wt-cat-day{width:80px;font-size:11px;font-weight:700;color:var(--accent);flex-shrink:0;}
+.wt-cat-meal{flex:1;font-size:12px;color:var(--text);}
+/* Price table extras */
+.pt-divider{height:1px;background:var(--border);margin:4px 0;}
+.pt-included{background:rgba(0,229,160,0.02);}
+.pt-extra{background:rgba(245,158,11,0.02);}
+.pt-orange{color:var(--warn)!important;}
+.rooms-grid{display:flex;flex-direction:column;gap:12px;}
+.filter-tabs{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap;}
+.filter-tab{padding:7px 14px;background:var(--card2);border:1px solid var(--border);border-radius:10px;font-size:11px;font-weight:700;cursor:pointer;color:var(--muted2);letter-spacing:0.3px;}
+.filter-tab.active{background:rgba(0,180,200,0.12);border-color:rgba(0,180,200,0.25);color:var(--accent);}
+.room-card{background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden;transition:all 0.25s;}
+.room-img{height:140px;background:linear-gradient(155deg,#081525,#030c18);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+.room-img::after{content:'';position:absolute;bottom:0;left:0;right:0;height:50px;background:linear-gradient(to top,var(--card),transparent);pointer-events:none;}
+.room-img-emoji{font-size:56px;opacity:0.4;}
+.room-badge{position:absolute;top:10px;right:10px;padding:4px 10px;border-radius:16px;font-size:10px;font-weight:800;z-index:1;}
+.rb-bosh{background:rgba(0,180,200,0.12);color:var(--accent);border:1px solid rgba(0,180,200,0.25);}
+.rb-band{background:rgba(255,64,96,0.12);color:var(--danger);border:1px solid rgba(255,64,96,0.2);}
+.rb-soon{background:rgba(245,158,11,0.12);color:var(--warn);border:1px solid rgba(245,158,11,0.2);}
+.room-body{padding:14px 16px;}
+.room-num{font-size:10px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:2px;margin-bottom:3px;}
+.room-name{font-family:'Playfair Display',serif;font-size:16px;color:var(--white);margin-bottom:9px;font-weight:700;}
+.room-features{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:12px;}
+.feature{background:rgba(0,180,200,0.06);border:1px solid rgba(0,180,200,0.1);color:var(--muted2);font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;}
+.room-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px;border-top:1px solid var(--border);}
+.ra-bosh{color:var(--accent);}
+.ra-band{color:var(--danger);}
+.ra-soon{color:var(--warn);}
+.room-avail{font-size:11px;font-weight:700;margin-bottom:3px;}
+.room-price .price{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--white);}
+.room-price .per{font-size:10px;color:var(--muted2);text-transform:uppercase;}
+.btn-book{background:linear-gradient(135deg,#00b4c8,#007a8a);color:#fff;border:none;border-radius:12px;padding:9px 18px;font-size:12px;font-weight:800;cursor:pointer;}
+.btn-book:disabled{background:rgba(255,64,96,0.12);color:var(--danger);border:1px solid rgba(255,64,96,0.15);cursor:default;}
+.booking-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:16px;display:flex;gap:12px;margin-bottom:10px;}
+.bk-icon-wrap{width:44px;height:44px;background:rgba(0,180,200,0.08);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.bk-info{flex:1;}
+.bk-room{font-weight:800;color:var(--white);font-size:14px;margin-bottom:3px;}
+.bk-dates{font-size:11px;color:var(--muted2);margin-bottom:2px;}
+.bk-right{text-align:right;}
+.bk-cost{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--accent);margin-bottom:4px;}
+.bk-st{font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;background:rgba(0,229,160,0.1);color:var(--accent2);border:1px solid rgba(0,229,160,0.2);}
+.bk-progress-wrap{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+.bk-progress-labels{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.bk-progress-left{font-size:11px;color:var(--muted2);}
+.bk-progress-right{font-size:11px;font-weight:800;}
+.bk-progress-bar{height:6px;background:var(--muted);border-radius:3px;overflow:hidden;}
+.bk-progress-fill{height:100%;border-radius:3px;transition:width 0.5s ease;}
+.bk-countdown{margin-top:8px;display:flex;gap:6px;justify-content:center;}
+.bk-cd-box{flex:1;text-align:center;background:rgba(0,180,200,0.06);border:1px solid var(--border);border-radius:10px;padding:7px 4px;}
+.bk-cd-num{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--white);line-height:1;}
+.bk-cd-lbl{font-size:9px;color:var(--muted2);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+.bk-cd-box.urgent .bk-cd-num{color:var(--danger);}
+.bk-cd-box.warn .bk-cd-num{color:var(--warn);}
+.bk-cd-box.ok .bk-cd-num{color:var(--accent2);}
+.bk-expired-banner{margin-top:10px;padding:8px 12px;background:rgba(255,64,96,0.08);border:1px solid rgba(255,64,96,0.2);border-radius:10px;text-align:center;font-size:12px;font-weight:700;color:var(--danger);}
+.bk-today-banner{margin-top:10px;padding:8px 12px;background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.2);border-radius:10px;text-align:center;font-size:12px;font-weight:700;color:var(--gold);}
+.bk-card-active{border-color:rgba(0,180,200,0.3);background:linear-gradient(160deg,var(--card),rgba(0,180,200,0.03));}
+.bk-card-expired{border-color:rgba(255,64,96,0.2);background:linear-gradient(160deg,var(--card),rgba(255,64,96,0.02));}
+.admin-bk-progress{margin-top:6px;}
+.admin-bk-bar{height:4px;background:var(--muted);border-radius:2px;overflow:hidden;margin-top:4px;}
+.admin-bk-fill{height:100%;border-radius:2px;}
+.empty-state{text-align:center;padding:48px 24px;}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-state h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);margin-bottom:6px;}
+.empty-state p{font-size:13px;color:var(--muted2);}
+.modal-overlay{position:fixed;inset:0;z-index:200;background:rgba(2,6,14,0.88);backdrop-filter:blur(8px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.modal-overlay.open{opacity:1;pointer-events:all;}
+.modal-sheet{background:var(--card);border-radius:28px 28px 0 0;padding:24px 20px 36px;width:100%;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);border-top:1px solid var(--border);}
+.modal-overlay.open .modal-sheet{transform:none;}
+.modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+.modal-title{font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:16px;}
+.modal-room-info{background:rgba(0,180,200,0.05);border:1px solid rgba(0,180,200,0.12);border-radius:14px;padding:12px 14px;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;}
+.mr-title{font-size:13px;font-weight:800;color:var(--white);}
+.mr-sub{font-size:11px;color:var(--muted2);margin-top:2px;}
+.mr-price{font-family:'Playfair Display',serif;font-size:18px;font-weight:800;color:var(--accent);}
+.date-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.date-lbl{font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+.date-inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;}
+.date-inp:focus{border-color:rgba(0,180,200,0.4);}
+.cost-calc{background:rgba(0,229,160,0.04);border:1px solid rgba(0,229,160,0.12);border-radius:14px;padding:12px 14px;margin-bottom:16px;}
+.cost-row{display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;}
+.cost-row:last-child{font-size:14px;font-weight:800;color:var(--white);margin:0;padding-top:8px;border-top:1px solid rgba(0,229,160,0.1);}
+.btn-confirm{width:100%;padding:15px;background:linear-gradient(135deg,#00b4c8,#007a8a);border:none;border-radius:16px;color:#fff;font-size:15px;font-weight:800;cursor:pointer;}
+.btn-cancel{width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:14px;color:var(--muted2);font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;}
+#adminScreen{background:var(--bg);flex-direction:column;}
+.admin-body{flex:1;display:flex;overflow:hidden;min-height:0;}
+.admin-header{height:var(--nh);background:rgba(4,10,20,0.95);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px;flex-shrink:0;}
+.admin-out{margin-left:auto;background:rgba(255,64,96,0.1);border:1px solid rgba(255,64,96,0.2);color:var(--danger);border-radius:10px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+
+
+.sb-item{width:56px;display:flex;flex-direction:column;align-items:center;gap:3px;padding:10px 4px;border-radius:14px;cursor:pointer;transition:all 0.2s;}
+.sb-item .si{font-size:18px;}
+.sb-item .sl{font-size:8px;font-weight:800;text-transform:uppercase;color:var(--muted2);letter-spacing:0.3px;}
+.sb-item.active{background:rgba(0,180,200,0.1);}.sb-item.active .sl{color:var(--accent);}
+.admin-content{flex:1;overflow-y:auto;padding:16px;}
+.admin-sidebar{display:none;width:80px;background:rgba(7,15,29,0.95);border-right:1px solid var(--border);flex-direction:column;align-items:center;padding:12px 0;gap:4px;flex-shrink:0;}
+.admin-bnav{display:flex;position:fixed;bottom:0;left:0;right:0;height:var(--bn);background:rgba(4,10,20,0.97);backdrop-filter:blur(20px);border-top:1px solid var(--border);z-index:100;}
+@media(min-width:768px){.admin-sidebar{display:flex;}.admin-bnav{display:none;}.admin-content{padding:24px 24px 24px;}}
+.abn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;transition:all 0.2s;}
+.abn-i{font-size:20px;}.abn-l{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;}
+.abn-item.active .abn-l{color:#e53e3e;}.abn-item.active .abn-i{transform:translateY(-2px);}
+.admin-page{display:none;animation:fadeUp 0.3s ease;}.admin-page.active{display:block;}
+/* Blok/kategoriya badge */
+.rc-badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:9px;font-weight:800;letter-spacing:0.3px;}
+.rc-badge.blok{background:rgba(0,180,200,0.12);color:var(--accent);border:1px solid rgba(0,180,200,0.2);}
+.rc-badge.prem{background:rgba(240,165,0,0.12);color:#f0a500;border:1px solid rgba(240,165,0,0.2);}
+.rc-badge.std{background:rgba(255,255,255,0.06);color:var(--muted2);border:1px solid var(--border);}
+/* O'rinlar */
+.orins-row{display:flex;gap:5px;margin:6px 0;}
+.orin{padding:3px 10px;border-radius:7px;font-size:11px;font-weight:800;cursor:default;}
+.orin-bosh{background:rgba(0,229,160,0.15);color:var(--accent2);border:1px solid rgba(0,229,160,0.3);}
+.orin-band{background:rgba(255,64,96,0.15);color:var(--danger);border:1px solid rgba(255,64,96,0.3);text-decoration:line-through;opacity:0.8;}
+/* Kutish tugmasi */
+.btn-wait{padding:10px 14px;border-radius:14px;font-size:12px;font-weight:800;cursor:pointer;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:#f59e0b;width:100%;}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;}
+.stat-card.blue{border-color:rgba(0,180,200,0.2);}
+.stat-card.green{border-color:rgba(0,229,160,0.2);}
+.stat-card.red{border-color:rgba(255,64,96,0.2);}
+.stat-card.yellow{border-color:rgba(240,165,0,0.2);}
+.sc-icon{font-size:20px;margin-bottom:6px;}
+.sc-num{font-family:'Playfair Display',serif;font-size:24px;color:var(--white);font-weight:800;}
+.sc-lbl{font-size:11px;color:var(--muted2);font-weight:600;}
+.admin-page-title{font-family:'Playfair Display',serif;font-size:17px;color:var(--white);font-weight:700;margin-bottom:14px;}
+.btn-add{background:linear-gradient(135deg,#00b4c8,#007a8a);color:#fff;border:none;border-radius:12px;padding:10px 18px;font-size:12px;font-weight:800;cursor:pointer;margin-bottom:14px;}
+.admin-rooms-grid{display:flex;flex-direction:column;gap:8px;}
+.arc{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:12px;}
+.arc-emoji{font-size:24px;width:44px;height:44px;background:rgba(0,180,200,0.07);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.arc-info{flex:1;}
+.arc-num{font-size:11px;color:var(--accent);font-weight:800;text-transform:uppercase;letter-spacing:1px;}
+.arc-name{font-size:13px;font-weight:700;color:var(--white);}
+.arc-st{font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;margin-top:4px;display:inline-block;}
+.arc-st.bosh{background:rgba(0,180,200,0.1);color:var(--accent);}
+.arc-st.band{background:rgba(255,64,96,0.1);color:var(--danger);}
+.arc-st.soon{background:rgba(245,158,11,0.1);color:var(--warn);}
+.arc-actions{display:flex;gap:5px;flex-wrap:wrap;}
+.arc-btn{padding:6px 10px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer;border:1px solid;}
+.arc-btn.av{background:rgba(0,180,200,0.08);border-color:rgba(0,180,200,0.2);color:var(--accent);}
+.arc-btn.bsy{background:rgba(255,64,96,0.08);border-color:rgba(255,64,96,0.2);color:var(--danger);}
+.arc-btn.sn{background:rgba(245,158,11,0.08);border-color:rgba(245,158,11,0.2);color:var(--warn);}
+.arc-btn.ed{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.2);color:#a78bfa;}
+.arc-btn.dl{background:rgba(255,64,96,0.06);border-color:rgba(255,64,96,0.15);color:var(--danger);}
+table{width:100%;border-collapse:collapse;font-size:11px;}
+th{padding:8px 6px;text-align:left;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:0.4px;border-bottom:1px solid var(--border);}
+td{padding:8px 6px;border-bottom:1px solid rgba(0,180,200,0.04);color:var(--text);}
+.badge{padding:3px 8px;border-radius:8px;font-size:10px;font-weight:800;}
+.badge.green{background:rgba(0,229,160,0.1);color:var(--accent2);}
+.rf-overlay{position:fixed;inset:0;z-index:300;background:rgba(2,6,14,0.88);backdrop-filter:blur(8px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.rf-overlay.open{opacity:1;pointer-events:all;}
+.rf-sheet{background:var(--card);border-radius:28px 28px 0 0;padding:24px 20px 40px;width:100%;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);border-top:1px solid var(--border);max-height:90vh;overflow-y:auto;}
+.rf-overlay.open .rf-sheet{transform:none;}
+.rf-lbl{font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px;}
+.rf-inp{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 12px;font-size:13px;color:var(--text);outline:none;margin-bottom:12px;}
+.rf-inp:focus{border-color:rgba(0,180,200,0.4);}
+.rf-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.rf-sb-row{display:flex;gap:8px;margin-bottom:16px;}
+.rfsb{flex:1;padding:10px 4px;border-radius:12px;font-size:11px;font-weight:800;cursor:pointer;border:1px solid;text-align:center;}
+.rfsb.bosh{border-color:rgba(0,180,200,0.25);color:var(--muted2);}
+.rfsb.bosh.sel{background:rgba(0,180,200,0.12);color:var(--accent);}
+.rfsb.band{border-color:rgba(255,64,96,0.25);color:var(--muted2);}
+.rfsb.band.sel{background:rgba(255,64,96,0.12);color:var(--danger);}
+.rfsb.soon{border-color:rgba(245,158,11,0.25);color:var(--muted2);}
+.rfsb.soon.sel{background:rgba(245,158,11,0.12);color:var(--warn);}
+.btn-save{width:100%;padding:14px;background:linear-gradient(135deg,#00b4c8,#007a8a);border:none;border-radius:14px;color:#fff;font-size:14px;font-weight:800;cursor:pointer;margin-top:4px;}
+.btn-rf-cancel{width:100%;padding:12px;background:transparent;border:1px solid var(--border);border-radius:12px;color:var(--muted2);font-size:13px;font-weight:700;cursor:pointer;margin-top:8px;}
+.toast{position:fixed;bottom:82px;left:50%;transform:translateX(-50%) translateY(14px);background:rgba(7,16,31,0.97);border:1px solid rgba(0,180,200,0.16);color:var(--text);padding:11px 20px;border-radius:14px;font-size:13px;font-weight:700;box-shadow:0 8px 32px rgba(0,0,0,0.5);z-index:900;opacity:0;transition:all 0.32s cubic-bezier(0.4,0,0.2,1);display:flex;align-items:center;gap:8px;backdrop-filter:blur(16px);white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#loadingOverlay{position:fixed;inset:0;z-index:9999;background:rgba(4,10,20,0.97);backdrop-filter:blur(16px);display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+.loading-logo{font-size:40px;animation:hb 2s ease-in-out infinite;}
+.loading-spin{width:44px;height:44px;border:2px solid rgba(0,180,200,0.1);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;}
+#loadingText{color:var(--muted2);font-size:13px;font-weight:700;}
+
+/* ── IMAGE SLIDER ── */
+.room-slider{position:relative;height:180px;overflow:hidden;background:#030c18;cursor:pointer;}
+.room-slides{display:flex;height:100%;transition:transform 0.4s ease;}
+.room-slide-img{min-width:100%;height:100%;object-fit:cover;flex-shrink:0;}
+.room-slide-placeholder{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:60px;opacity:0.35;flex-shrink:0;}
+.slider-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;z-index:2;}
+.sdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.35);transition:all 0.2s;}
+.sdot.active{background:#00b4c8;width:16px;border-radius:3px;}
+.slider-arr{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.5);border:none;color:#fff;width:32px;height:32px;border-radius:50%;font-size:16px;cursor:pointer;z-index:2;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.slider-arr.prev{left:8px;}.slider-arr.next{right:8px;}
+.slider-count{position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.55);color:#fff;font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;z-index:2;backdrop-filter:blur(4px);}
+
+/* ── PATIENT MODAL ── */
+.pat-overlay{position:fixed;inset:0;z-index:400;background:rgba(2,6,14,0.9);backdrop-filter:blur(8px);display:flex;align-items:flex-end;opacity:0;pointer-events:none;transition:opacity 0.3s;}
+.pat-overlay.open{opacity:1;pointer-events:all;}
+.pat-sheet{background:var(--card);border-radius:28px 28px 0 0;padding:24px 20px 40px;width:100%;transform:translateY(100%);transition:transform 0.38s cubic-bezier(0.4,0,0.2,1);border-top:1px solid var(--border);max-height:92vh;overflow-y:auto;}
+.pat-overlay.open .pat-sheet{transform:none;}
+.pat-section-title{font-size:11px;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin:16px 0 8px;}
+.pat-grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.pat-field{margin-bottom:0;}
+
+/* ── FOOD TABLE ADMIN ── */
+.food-table{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:12px;}
+.food-table-head{display:grid;grid-template-columns:80px 1fr 1fr 1fr;background:rgba(0,180,200,0.08);border-bottom:1px solid var(--border);}
+.food-table-row{display:grid;grid-template-columns:80px 1fr 1fr 1fr;border-bottom:1px solid rgba(0,180,200,0.05);}
+.food-table-row:last-child{border:none;}
+.ftc{padding:9px 10px;font-size:11px;font-weight:600;color:var(--text);border-right:1px solid rgba(0,180,200,0.05);}
+.ftc:last-child{border:none;}
+.food-table-head .ftc{color:var(--accent);font-size:10px;text-transform:uppercase;letter-spacing:0.5px;font-weight:800;}
+.ftc.day{color:var(--white);font-weight:800;}
+.ftc input{background:transparent;border:none;outline:none;color:var(--text);font-size:11px;width:100%;font-family:'DM Sans',sans-serif;}
+.ftc input:focus{color:var(--white);}
+
+/* ── FINANCE ── */
+.fin-month-nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.fin-month-lbl{font-family:'Playfair Display',serif;font-size:16px;color:var(--white);font-weight:700;}
+.fin-nav-btn{background:var(--card2);border:1px solid var(--border);color:var(--text);border-radius:10px;padding:6px 12px;font-size:13px;cursor:pointer;}
+.fin-summary{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;}
+.fin-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;}
+.fin-card.income{border-color:rgba(0,229,160,0.2);}
+.fin-card.expense{border-color:rgba(255,64,96,0.2);}
+.fin-card.profit{border-color:rgba(240,165,0,0.25);grid-column:1/-1;}
+.fin-lbl{font-size:10px;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;}
+.fin-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:800;}
+.fin-val.green{color:var(--accent2);}
+.fin-val.red{color:var(--danger);}
+.fin-val.gold{color:var(--gold);}
+.fin-add-row{display:flex;gap:8px;margin-bottom:12px;}
+.fin-inp{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--text);outline:none;}
+.fin-inp:focus{border-color:rgba(0,180,200,0.4);}
+.fin-select{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--text);outline:none;}
+.fin-add-btn{background:linear-gradient(135deg,#00b4c8,#007a8a);border:none;border-radius:10px;padding:10px 16px;color:#fff;font-size:12px;font-weight:800;cursor:pointer;white-space:nowrap;}
+.fin-list{display:flex;flex-direction:column;gap:6px;}
+.fin-item{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:10px;}
+.fin-item-dot{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;}
+.fin-item-dot.income{background:rgba(0,229,160,0.1);}
+.fin-item-dot.expense{background:rgba(255,64,96,0.1);}
+.fin-item-desc{flex:1;font-size:12px;color:var(--white);font-weight:600;}
+.fin-item-date{font-size:10px;color:var(--muted2);}
+.fin-item-amt{font-family:'Playfair Display',serif;font-size:14px;font-weight:700;}
+.fin-item-amt.income{color:var(--accent2);}
+.fin-item-amt.expense{color:var(--danger);}
+.fin-del{background:none;border:none;color:var(--muted2);cursor:pointer;font-size:14px;padding:2px;}
+
+/* ── PATIENTS LIST ── */
+.patient-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.pat-av{width:40px;height:40px;background:linear-gradient(135deg,rgba(0,180,200,0.2),rgba(0,180,200,0.05));border:1px solid rgba(0,180,200,0.2);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.pat-info{flex:1;}
+.pat-name{font-size:13px;font-weight:800;color:var(--white);}
+.pat-meta{font-size:11px;color:var(--muted2);margin-top:2px;}
+.pat-room-badge{background:rgba(0,180,200,0.1);color:var(--accent);font-size:10px;font-weight:800;padding:3px 8px;border-radius:8px;border:1px solid rgba(0,180,200,0.2);}
+.pat-actions{display:flex;gap:6px;}
+.pat-btn{padding:6px 10px;border-radius:9px;font-size:11px;font-weight:800;cursor:pointer;border:1px solid;}
+.pat-btn.edit{background:rgba(0,180,200,0.08);border-color:rgba(0,180,200,0.2);color:var(--accent);}
+.pat-btn.del{background:rgba(255,64,96,0.08);border-color:rgba(255,64,96,0.15);color:var(--danger);}
+</style>
+</head>
+<body>
+<div id="loadingOverlay"><div class="loading-logo">✚</div><div class="loading-spin"></div><div id="loadingText">Yuklanmoqda...</div></div>
+
+<div class="screen" id="loginScreen">
+  <div class="lhero">
+    <div class="lhero-grid"></div><div class="lhero-scan"></div>
+    <span class="lhero-cross">✚</span><span class="lhero-cross">✚</span><span class="lhero-cross">✚</span><span class="lhero-cross">✚</span>
+    <div class="logo-wrap">
+      <div class="logo-icon">R</div>
+      <div class="logo-text"><h1>RITM CLINIC</h1><p>Statsionar • Davolanish</p></div>
+    </div>
+    <div class="lhero-stats">
+      <div class="lhero-stat"><div class="lhero-stat-num">17</div><div class="lhero-stat-lbl">Xona</div></div>
+      <div class="lhero-stat"><div class="lhero-stat-num">3x</div><div class="lhero-stat-lbl">Ovqat</div></div>
+      <div class="lhero-stat"><div class="lhero-stat-num">24/7</div><div class="lhero-stat-lbl">Xizmat</div></div>
+    </div>
+    <div class="lhero-ecg">
+      <svg viewBox="0 0 380 28" preserveAspectRatio="none">
+        <defs><linearGradient id="ecgG" x1="0" x2="1"><stop offset="0%" stop-color="#00b4c8"/><stop offset="100%" stop-color="#00e5a0"/></linearGradient></defs>
+        <path class="lhero-ecg-path" d="M0,14 L55,14 L75,3 L90,25 L105,7 L120,21 L135,14 L190,14 L210,3 L225,25 L240,7 L255,21 L270,14 L380,14"/>
+      </svg>
+    </div>
+  </div>
+  <div class="lsheet">
+    <div class="ltabs">
+      <div class="ltab active" onclick="switchLTab('client')">📋 Kirish</div>
+      <div class="ltab" onclick="switchLTab('admin')">🔑 Admin</div>
+    </div>
+    <div id="clientForm">
+      <div class="fhead"><h2>Xush kelibsiz</h2><p>Isim va telefon raqamingizni kiriting</p></div>
+      <div class="frow2">
+        <div class="fg"><div class="iw"><span class="ii">👤</span><input type="text" id="lFname" placeholder="Ism"></div></div>
+        <div class="fg"><div class="iw"><span class="ii">👤</span><input type="text" id="lLname" placeholder="Familiya"></div></div>
+      </div>
+      <div class="fg"><div class="iw"><span class="ii">📞</span><input type="text" id="lPhone" placeholder="+998 90 000 00 00"></div></div>
+      <button class="btn-login" onclick="clientLogin()">Kirish →</button>
+    </div>
+    <div id="adminForm" style="display:none">
+      <div class="fhead"><h2>Admin kirish</h2><p>Tizimga kirish uchun</p></div>
+      <div class="fg"><div class="iw"><span class="ii">👤</span><input type="text" id="aLogin" placeholder="Login"></div></div>
+      <div class="fg"><div class="iw"><span class="ii">🔒</span><input type="password" id="aPass" placeholder="Parol"><span style="position:absolute;right:14px;cursor:pointer;font-size:14px;" onclick="togglePw()">👁</span></div></div>
+      <button class="btn-login" onclick="adminLogin()">Kirish →</button>
+    </div>
+    <div class="l-err" id="lErr"></div>
+
+  </div>
+</div>
+
+<div class="screen" id="mainScreen">
+  <header class="app-header">
+    <div class="ah-logo">
+      <div class="ah-logo-icon">R</div>
+      <div class="ah-logo-text"><h2>RITM CLINIC</h2><span>Statsionar</span></div>
+    </div>
+    <div class="ah-right">
+      <div class="user-chip"><div class="user-av" id="userAv">?</div><span id="userName">Bemor</span></div>
+      <button class="btn-out" onclick="logout()">↩</button>
+    </div>
+  </header>
+  <nav class="bnav" id="topNav">
+    <div class="bnav-item active" onclick="goSlide(0)"><div class="bi">🏠</div><div class="bl">Bosh</div></div>
+    <div class="bnav-item" onclick="goSlide(1)"><div class="bi">🛏️</div><div class="bl">Xonalar</div></div>
+    <div class="bnav-item" onclick="goSlide(2)"><div class="bi">💰</div><div class="bl">Narxlar</div></div>
+    <div class="bnav-item" onclick="goSlide(3)"><div class="bi">🍽️</div><div class="bl">Taom</div></div>
+    <div class="bnav-item" onclick="goSlide(4)"><div class="bi">🏨</div><div class="bl">Qulaylik</div></div>
+    <div class="bnav-item" onclick="goSlide(5)"><div class="bi">📋</div><div class="bl">Bronlar</div></div>
+  </nav>
+  <div class="slides-wrap">
+    <div class="slides-track" id="slidesTrack">
+
+      <!-- SLIDE 0: Bosh sahifa -->
+      <div class="slide" id="slide-0">
+        <div class="hero">
+          <div class="hero-badge"><div class="hero-dot"></div>Premium Statsionar</div>
+          <h1>RITM CLINIC —<br><em>Sog'lom hayot</em></h1>
+          <p>Zamonaviy tibbiyot, qulay xonalar va individual parvarishdan iborat to'liq davolanish kompleksi</p>
+          <div class="hero-stats">
+            <div class="hstat"><div class="hstat-num">17</div><div class="hstat-lbl">Xona</div></div>
+            <div class="hstat"><div class="hstat-num">3x</div><div class="hstat-lbl">Ovqat</div></div>
+            <div class="hstat"><div class="hstat-num">24/7</div><div class="hstat-lbl">Xizmat</div></div>
+          </div>
+        </div>
+        <div id="alertBanners"></div>
+        <div id="homeInfoStrip" class="info-strip"></div>
+        <div class="announce">
+          <div class="announce-tag">✨ Yangilik</div>
+          <h3>RITM CLINIC — barcha xonalar bosh!</h3>
+          <p>Jakuziy, fizioterapiya, 3 mahal ovqat va tibbiy nazorat bilan premium davolanish.</p>
+        </div>
+      </div>
+      <!-- SLIDE 1: Xonalar -->
+      <div class="slide" id="slide-1">
+        <div class="slide-page-title">🛏️ Xonalar</div>
+        <div style="position:relative;margin-bottom:10px;"><input class="rf-inp" id="publicSearchInp" placeholder="🔍 Qidirish..." oninput="publicSearch(this.value)" style="background:var(--card2);"><div id="searchResults" style="display:none;position:absolute;top:110%;left:0;right:0;background:var(--card);border:1px solid var(--border);border-radius:14px;z-index:50;max-height:220px;overflow-y:auto;"></div></div>
+        <div class="filter-tabs" style="flex-wrap:wrap;gap:6px;">
+          <div class="filter-tab active" onclick="filterRooms('all',this)">Barchasi</div>
+<div class="filter-tab" onclick="filterRooms('3',this)">3 kishilik</div>
+          <div class="filter-tab" onclick="filterRooms('2',this)">2 kishilik</div>
+          <div class="filter-tab" onclick="filterRooms('bosh',this)">🟢 Bo'sh</div>
+          <div class="filter-tab" onclick="filterRooms('premium',this)">⭐ Premium</div>
+        </div>
+        <div class="rooms-grid" id="allRooms"></div>
+      </div>
+
+      <!-- SLIDE 2: Narxlar -->
+      <div class="slide" id="slide-2">
+        <div class="slide-page-title">💰 Narxlar</div>
+        <!-- Narx kategoriya tablar -->
+        <div class="price-cat-tabs">
+          <div class="pct active" onclick="switchPriceCat('xona',this)">🛏️ Xonalar</div>
+          <div class="pct" onclick="switchPriceCat('xizmat',this)">✅ Kiritilgan</div>
+          <div class="pct" onclick="switchPriceCat('qoshimcha',this)">➕ Qo'shimcha</div>
+        </div>
+        <!-- Xona narxlari -->
+        <div class="price-cat-section" id="pcat-xona">
+          <div class="price-room-card">
+            <div class="prc-top">
+              <div class="prc-icon">👥</div>
+              <div class="prc-badge">Mavjud</div>
+            </div>
+            <div class="prc-name">3 kishilik xona</div>
+            <div class="prc-desc">Uchta o'rin · Umumiy hojatxona · TV · Konditsioner</div>
+            <div class="prc-price-row">
+              <div class="prc-price">150 000 <span>so'm</span></div>
+              <div class="prc-per">kunlik / kishi</div>
+            </div>
+            <div class="prc-features">
+              <span>✓ TV</span><span>✓ Konditsioner</span><span>✓ Wi-Fi</span><span>✓ 3 mahal ovqat</span>
+            </div>
+          </div>
+          <div class="price-room-card prc-premium">
+            <div class="prc-top">
+              <div class="prc-icon">👫</div>
+              <div class="prc-badge prc-badge-gold">Premium</div>
+            </div>
+            <div class="prc-name">2 kishilik xona</div>
+            <div class="prc-desc">Ikki o'rin · Shaxsiy hojatxona · Jakuziy kiritilgan</div>
+            <div class="prc-price-row">
+              <div class="prc-price prc-gold">180 000 <span>so'm</span></div>
+              <div class="prc-per">kunlik / kishi</div>
+            </div>
+            <div class="prc-features">
+              <span>✓ TV</span><span>✓ Konditsioner</span><span>✓ Wi-Fi</span><span>✓ Jakuziy</span><span>✓ 3 mahal ovqat</span>
+            </div>
+          </div>
+        </div>
+        <!-- Kiritilgan xizmatlar -->
+        <div class="price-cat-section" id="pcat-xizmat" style="display:none">
+          <div class="inc-info-banner">✅ Quyidagi xizmatlar xona narxiga kiritilgan — qo'shimcha to'lov yo'q</div>
+          <div class="inc-card"><div class="inc-icon">🍽️</div><div class="inc-body"><div class="inc-name">3 mahal ovqat</div><div class="inc-desc">Nonushta · Tushlik · Kechki ovqat. Dietolog menyusi.</div></div><div class="inc-tag">Bepul</div></div>
+          <div class="inc-card"><div class="inc-icon">🏊</div><div class="inc-body"><div class="inc-name">Jakuziy</div><div class="inc-desc">Har kuni 17:00–21:00. Gidromasaj.</div></div><div class="inc-tag">Bepul</div></div>
+          <div class="inc-card"><div class="inc-icon">⚡</div><div class="inc-body"><div class="inc-name">Fizioterapiya</div><div class="inc-desc">Shifokor ko'rsatmasiga ko'ra. Elektroforez, UHF.</div></div><div class="inc-tag">Bepul</div></div>
+          <div class="inc-card"><div class="inc-icon">🏥</div><div class="inc-body"><div class="inc-name">24/7 tibbiy nazorat</div><div class="inc-desc">Hamshira va shifokor doimiy kuzatuvi.</div></div><div class="inc-tag">Bepul</div></div>
+          <div class="inc-card"><div class="inc-icon">📡</div><div class="inc-body"><div class="inc-name">Wi-Fi internet</div><div class="inc-desc">Yuqori tezlikli internet barcha xonalarda.</div></div><div class="inc-tag">Bepul</div></div>
+          <div class="inc-card"><div class="inc-icon">❄️</div><div class="inc-body"><div class="inc-name">Konditsioner</div><div class="inc-desc">Barcha xonalarda isitish va sovutish.</div></div><div class="inc-tag">Bepul</div></div>
+        </div>
+        <!-- Qo'shimcha xizmatlar -->
+        <div class="price-cat-section" id="pcat-qoshimcha" style="display:none">
+          <div class="inc-info-banner extra-banner">➕ Quyidagi xizmatlar alohida hisoblanadi</div>
+          <div class="inc-card extra-card"><div class="inc-icon">💊</div><div class="inc-body"><div class="inc-name">Dori-darmonlar</div><div class="inc-desc">Shifokor buyrug'iga ko'ra. Narx dori turiga qarab.</div></div><div class="inc-tag extra-tag">Alohida</div></div>
+          <div class="inc-card extra-card"><div class="inc-icon">🔬</div><div class="inc-body"><div class="inc-name">Laboratoriya tahlillari</div><div class="inc-desc">Qon, siydik, biokimyoviy tekshiruvlar.</div></div><div class="inc-tag extra-tag">Alohida</div></div>
+          <div class="inc-card extra-card"><div class="inc-icon">🩺</div><div class="inc-body"><div class="inc-name">Mutaxassis konsultatsiyasi</div><div class="inc-desc">Kardiolog, nevrolog va boshqa mutaxassislar.</div></div><div class="inc-tag extra-tag">Alohida</div></div>
+          <div class="inc-card extra-card"><div class="inc-icon">🚑</div><div class="inc-body"><div class="inc-name">Tez yordam chaqirish</div><div class="inc-desc">Klinika tashqarisidan tez yordam xizmati.</div></div><div class="inc-tag extra-tag">Alohida</div></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 3: Taomnoma -->
+      <div class="slide" id="slide-3">
+        <div class="slide-page-title">🍽️ Haftalik taomnoma</div>
+        <div class="week-table">
+          <div class="food-cat-tabs">
+            <div class="food-cat-tab fct-active" onclick="switchFoodCat('all',this)">📋 Barchasi</div>
+            <div class="food-cat-tab" onclick="switchFoodCat('b',this)">🌅 Nonushta</div>
+            <div class="food-cat-tab" onclick="switchFoodCat('l',this)">☀️ Tushlik</div>
+            <div class="food-cat-tab" onclick="switchFoodCat('d',this)">🌙 Kechki</div>
+          </div>
+          <div id="publicFoodTable"></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 4: Qulayliklar -->
+      <div class="slide" id="slide-4">
+        <div class="slide-page-title">🏨 Qulayliklar</div>
+        <div class="am-cat-tabs">
+          <div class="am-cat-tab am-cat-active" onclick="switchAmCat('tibbiy',this)">🏥 Tibbiy</div>
+          <div class="am-cat-tab" onclick="switchAmCat('dam',this)">🏊 Dam olish</div>
+          <div class="am-cat-tab" onclick="switchAmCat('xona',this)">🛏️ Xona</div>
+        </div>
+        <div class="am-cat-section" id="amcat-tibbiy">
+          <div class="am-detail-card"><div class="am-dc-icon">🏥</div><div class="am-dc-body"><div class="am-dc-name">24/7 Hamshira xizmati</div><div class="am-dc-desc">Kecha-kunduz tibbiy yordam va doimiy kuzatuv. Favqulodda holatlarda tez munosabat.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">⚡</div><div class="am-dc-body"><div class="am-dc-name">Fizioterapiya</div><div class="am-dc-desc">Elektroforez, UHF, magnit terapiya, lazer terapiya. Shifokor ko'rsatmasiga ko'ra amalga oshiriladi.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">🔬</div><div class="am-dc-body"><div class="am-dc-name">Laboratoriya</div><div class="am-dc-desc">Zamonaviy uskunalar bilan jihozlangan laboratoriya. Tahlillar tez va aniq.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">🍽️</div><div class="am-dc-body"><div class="am-dc-name">Dietali ovqatlanish</div><div class="am-dc-desc">Kuniga 3 mahal issiq ovqat. Dietolog tomonidan ishlab chiqilgan maxsus menyu.</div></div></div>
+        </div>
+        <div class="am-cat-section" id="amcat-dam" style="display:none">
+          <div class="am-detail-card"><div class="am-dc-icon">🏊</div><div class="am-dc-body"><div class="am-dc-name">Jakuziy</div><div class="am-dc-desc">Har kuni 17:00–21:00. Gidromasaj vannasi. Relaksatsiya va davolash effekti.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">🌿</div><div class="am-dc-body"><div class="am-dc-name">Yashil bog'</div><div class="am-dc-desc">Ochiq havoda dam olish uchun qulay maydon. Toza havo va tabiat.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">📺</div><div class="am-dc-body"><div class="am-dc-name">Kabel TV</div><div class="am-dc-desc">Barcha xonalarda kabel televizor. Ko'plab kanallar mavjud.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">📡</div><div class="am-dc-body"><div class="am-dc-name">Yuqori tezlikli Wi-Fi</div><div class="am-dc-desc">Butun bino bo'ylab tez internet. Ish va ko'ngil ochish uchun.</div></div></div>
+        </div>
+        <div class="am-cat-section" id="amcat-xona" style="display:none">
+          <div class="am-detail-card"><div class="am-dc-icon">❄️</div><div class="am-dc-body"><div class="am-dc-name">Konditsioner</div><div class="am-dc-desc">Barcha xonalarda zamonaviy konditsioner. Yoz va qish uchun qulay harorat.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">🚿</div><div class="am-dc-body"><div class="am-dc-name">Shaxsiy hojatxona</div><div class="am-dc-desc">2 kishilik xonalarda alohida hojatxona. 3 kishiliklarida umumiy toza hojatxona.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">🛏️</div><div class="am-dc-body"><div class="am-dc-name">Qulay to'shak</div><div class="am-dc-desc">Ortopedik matras. Toza to'shak choyshaflari har kuni almashtiriladi.</div></div></div>
+          <div class="am-detail-card"><div class="am-dc-icon">🧹</div><div class="am-dc-body"><div class="am-dc-name">Kunlik tozalash</div><div class="am-dc-desc">Har kuni xonani tozalash va dezinfeksiya. Steril muhit.</div></div></div>
+        </div>
+      </div>
+
+      <!-- SLIDE 5: Bronlar -->
+      <div class="slide" id="slide-5">
+        <div class="slide-page-title">📋 Mening bronlarim</div>
+        <div id="myBookingsList"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="modal-overlay" id="bookingModal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">Xona bron qilish</div>
+    <div class="modal-room-info" id="modalRoomInfo"></div>
+    <div class="date-row">
+      <div><div class="date-lbl">Kirish</div><input type="date" class="date-inp" id="bookStart" onchange="calcCost()"></div>
+      <div><div class="date-lbl">Chiqish</div><input type="date" class="date-inp" id="bookEnd" onchange="calcCost()"></div>
+    </div>
+    <div class="cost-calc" id="costCalc" style="display:none">
+      <div class="cost-row"><span style="color:var(--muted2)">Narx</span><span id="costPrice"></span></div>
+      <div class="cost-row"><span style="color:var(--muted2)">Kunlar</span><span id="costDays"></span></div>
+      <div class="cost-row"><span>Jami</span><span id="costTotal" style="color:var(--accent2)"></span></div>
+    </div>
+    <button class="btn-confirm" onclick="confirmBooking()">✅ Tasdiqlash</button>
+    <button class="btn-cancel" onclick="closeModal()">Bekor qilish</button>
+  </div>
+</div>
+
+<!-- Kutish ro’yxati modal -->
+<div class="modal-overlay" id="waitModal" style="display:none;align-items:flex-end;">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title">⏳ Kutish ro’yxati</div>
+    <div id="waitRoomInfo" style="font-size:13px;color:var(--muted2);margin-bottom:12px;"></div>
+    <div class="rf-lbl">Ismingiz</div>
+    <input class="rf-inp" id="waitName" placeholder="Ism Familiya">
+    <div class="rf-lbl">Telefon raqam</div>
+    <input class="rf-inp" id="waitPhone" placeholder="+998 90 000 00 00" type="tel">
+    <div class="rf-lbl">Qo'shimcha izoh (ixtiyoriy)</div>
+    <input class="rf-inp" id="waitNote" placeholder="Masalan: 3 kundan keyin kelaman">
+    <button class="btn-confirm" onclick="addToWaitList()">📋 Ro'yxatga qo'shish</button>
+    <button class="btn-cancel" onclick="closeWaitModal()">Bekor qilish</button>
+  </div>
+</div>
+
+<div class="rf-overlay" id="buildingFormModal">
+  <div class="rf-sheet">
+    <div class="modal-handle"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:18px;" id="bfTitle">Yangi bino</div>
+    <input type="hidden" id="bfId">
+    <div class="rf-lbl">Bino nomi</div>
+    <input class="rf-inp" id="bfName" placeholder="Masalan: A blok">
+    <div class="rf-lbl">Tavsif</div>
+    <input class="rf-inp" id="bfDesc" placeholder="Masalan: Asosiy tibbiy bino">
+    <div class="rf-grid">
+      <div><div class="rf-lbl">Qavatlar</div><input class="rf-inp" id="bfFloors" type="number" value="2" min="1" max="20"></div>
+      <div><div class="rf-lbl">Emoji</div><input class="rf-inp" id="bfIcon" placeholder="🏥"></div>
+    </div>
+    <button class="btn-save" onclick="saveBuilding()">💾 Saqlash</button>
+    <button class="btn-rf-cancel" onclick="closeBuildingForm()">Bekor qilish</button>
+  </div>
+</div>
+
+<div class="rf-overlay" id="roomFormModal">
+  <div class="rf-sheet">
+    <div class="modal-handle"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:18px;" id="rfTitle">Yangi xona</div>
+    <div class="rf-grid">
+      <div><div class="rf-lbl">Xona raqami</div><input class="rf-inp" id="rfNum" placeholder="101"></div>
+      <div><div class="rf-lbl">Bino</div><select class="rf-inp" id="rfBlok"></select></div>
+    </div>
+    <div class="rf-grid">
+      <div><div class="rf-lbl">Turi</div><select class="rf-inp" id="rfType" onchange="updateRfCategory()"><option value="3">3 kishilik</option><option value="2">2 kishilik</option></select></div>
+      <div><div class="rf-lbl">Kategoriya</div><select class="rf-inp" id="rfCategory"><option value="standart">Standart</option><option value="premium">Premium</option></select></div>
+    </div>
+    <div id="rfOrinsWrap" style="margin-bottom:12px;">
+      <div class="rf-lbl">O'rinlar holati</div>
+      <div id="rfOrinsGrid" style="display:flex;gap:6px;flex-wrap:wrap;"></div>
+    </div>
+    <div class="rf-lbl">Holati</div>
+    <div class="rf-sb-row">
+      <div class="rfsb bosh sel" id="rfsb-bosh" onclick="selStatus('bosh')">🟢 Bo'sh</div>
+      <div class="rfsb band" id="rfsb-band" onclick="selStatus('band')">🔴 Band</div>
+      <div class="rfsb soon" id="rfsb-soon" onclick="selStatus('soon')">🟡 Yaqinda</div>
+    </div>
+    <div id="rfSoonWrap" style="display:none;margin-bottom:12px;"><div class="rf-lbl">Bo'shash sanasi</div><input type="date" class="rf-inp" id="rfSoonDate" style="margin-bottom:0"></div>
+    <div class="rf-lbl">Emoji</div>
+    <input class="rf-inp" id="rfIcon" placeholder="🛏️">
+    <div class="rf-lbl">Sharoitlar (birini bosing)</div>
+    <div id="rfFeaturesGrid" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px;"></div>
+    <div class="rf-lbl">Rasmlar (3 tagacha)</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <div style="flex:1;text-align:center;">
+        <div onclick="document.getElementById('rfImg1').click()" style="height:70px;background:var(--card2);border:1px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;" id="rfImg1Preview">+</div>
+        <input type="file" id="rfImg1" accept="image/*" style="display:none" onchange="previewRoomImg(this,1)">
+      </div>
+      <div style="flex:1;text-align:center;">
+        <div onclick="document.getElementById('rfImg2').click()" style="height:70px;background:var(--card2);border:1px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;" id="rfImg2Preview">+</div>
+        <input type="file" id="rfImg2" accept="image/*" style="display:none" onchange="previewRoomImg(this,2)">
+      </div>
+      <div style="flex:1;text-align:center;">
+        <div onclick="document.getElementById('rfImg3').click()" style="height:70px;background:var(--card2);border:1px dashed var(--border);border-radius:10px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;" id="rfImg3Preview">+</div>
+        <input type="file" id="rfImg3" accept="image/*" style="display:none" onchange="previewRoomImg(this,3)">
+      </div>
+    </div>
+    <button class="btn-save" onclick="saveRoom()">💾 Saqlash</button>
+    <button class="btn-rf-cancel" onclick="closeRoomForm()">Bekor qilish</button>
+  </div>
+</div>
+
+
+<div class="screen" id="adminScreen">
+  <div class="admin-header">
+    <div class="ah-logo-icon" style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#e53e3e,#c53030);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:14px;font-weight:900;color:#fff;">A</div>
+    <div style="margin-left:10px;flex:1;">
+      <div style="font-family:'Playfair Display',serif;font-size:16px;color:var(--white);font-weight:700;">RITM Admin</div>
+      <div id="syncStatus" style="font-size:10px;color:var(--muted2);">Mahalliy</div>
+    </div>
+    <button class="admin-out" onclick="adminLogout()">↩ Chiqish</button>
+  </div>
+  <div class="admin-body">
+    <!-- Yon sidebar: faqat katta ekranda -->
+    <div class="admin-sidebar">
+      <div class="sb-item active" onclick="showAdminPage('Dashboard',this)"><div class="si">📊</div><div class="sl">Bosh</div></div>
+      <div class="sb-item" onclick="showAdminPage('Rooms',this)"><div class="si">🛏️</div><div class="sl">Xona</div></div>
+      <div class="sb-item" onclick="showAdminPage('Patients',this)"><div class="si">🏥</div><div class="sl">Bemor</div></div>
+      <div class="sb-item" onclick="showAdminPage('Food',this)"><div class="si">🍽️</div><div class="sl">Taom</div></div>
+      <div class="sb-item" onclick="showAdminPage('Finance',this)"><div class="si">💰</div><div class="sl">Moliya</div></div>
+      <div class="sb-item" onclick="showAdminPage('Bookings',this)"><div class="si">📋</div><div class="sl">Bron</div></div>
+      <div class="sb-item" onclick="showAdminPage('Social',this)"><div class="si">📣</div><div class="sl">Ijtimoiy</div></div>
+    </div>
+    <div class="admin-content">
+      <div class="admin-page active" id="adminDashboard">
+        <div class="admin-page-title">📊 Dashboard</div>
+        <div class="stat-grid" id="adminStats"></div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--white);font-weight:700;margin-bottom:10px;">So'nggi bronlar</div>
+        <div id="recentBookingsTable" style="overflow-x:auto;"></div>
+      </div>
+      <div class="admin-page" id="adminRooms">
+        <div class="admin-page-title">🛏️ Xonalar boshqaruvi</div>
+        <button class="btn-add" onclick="openRoomForm()">+ Xona qo'shish</button>
+        <div class="admin-rooms-grid" id="adminRoomsMgmtGrid"></div>
+      </div>
+      <div class="admin-page" id="adminBookings">
+        <div class="admin-page-title">📋 Barcha bronlar</div>
+        <div id="allBookingsTable" style="overflow-x:auto;"></div>
+      </div>
+      <div class="admin-page" id="adminClients">
+        <div class="admin-page-title">👥 Mijozlar</div>
+        <div id="clientsTable" style="overflow-x:auto;"></div>
+      </div>
+
+      <div class="admin-page" id="adminPatients">
+        <div class="admin-page-title">🏥 Bemorlar ro'yxati</div>
+        <button class="btn-add" onclick="openPatientForm(null)">+ Bemor qabul qilish</button>
+        <div id="patientsList"></div>
+      </div>
+
+      <div class="admin-page" id="adminFood">
+        <div class="admin-page-title">🍽️ Haftalik taomnoma</div>
+        <div style="font-size:12px;color:var(--muted2);margin-bottom:14px;">Har kun 3 mahal ovqatni kiriting — avtomatik saqlanadi</div>
+        <div class="food-table">
+          <div class="food-table-head">
+            <div class="ftc">Kun</div>
+            <div class="ftc">Nonushta</div>
+            <div class="ftc">Tushlik</div>
+            <div class="ftc">Kechki</div>
+          </div>
+          <div id="foodTableBody"></div>
+        </div>
+        <button class="btn-add" onclick="saveFood()" style="width:100%;margin-top:4px;">💾 Saqlash</button>
+      </div>
+
+      <div class="admin-page" id="adminSocial">
+        <div class="admin-page-title">📣 Ijtimoiy tarmoqlar</div>
+        <div id="socialPageContent"></div>
+      </div>
+
+      <div class="admin-page" id="adminFinance">
+        <div class="admin-page-title">💰 Oylik hisobot</div>
+        <div class="fin-month-nav">
+          <button class="fin-nav-btn" onclick="finChangeMonth(-1)">‹ Oldingi</button>
+          <div class="fin-month-lbl" id="finMonthLbl"></div>
+          <button class="fin-nav-btn" onclick="finChangeMonth(1)">Keyingi ›</button>
+        </div>
+        <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap;">
+          <button onclick="finFilterSet('all',this)" class="fin-filter-btn active" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;background:rgba(0,180,200,0.12);border:1px solid rgba(0,180,200,0.2);color:var(--accent);">Hammasi</button>
+          <button onclick="finFilterSet('income',this)" class="fin-filter-btn" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;background:var(--card2);border:1px solid var(--border);color:var(--muted2);">📈 Kirim</button>
+          <button onclick="finFilterSet('expense',this)" class="fin-filter-btn" style="padding:5px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;background:var(--card2);border:1px solid var(--border);color:var(--muted2);">📉 Chiqim</button>
+        </div>
+        <div class="fin-summary" id="finSummary"></div>
+        <div style="font-family:'Playfair Display',serif;font-size:14px;color:var(--white);font-weight:700;margin-bottom:10px;">Kirim / Chiqim qo'shish</div>
+        <div class="fin-add-row">
+          <select class="fin-select" id="finType">
+            <option value="income">📈 Kirim</option>
+            <option value="expense">📉 Chiqim</option>
+          </select>
+          <input class="fin-inp" id="finDesc" placeholder="Tavsif (masalan: Xona №101)">
+          <input class="fin-inp" id="finAmt" type="number" placeholder="Summa" style="max-width:110px;">
+          <button class="fin-add-btn" onclick="addFinRecord()">+</button>
+        </div>
+        <div class="fin-list" id="finList"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Pastki nav: faqat mobilda -->
+  <nav class="admin-bnav">
+    <div class="abn-item active" onclick="showAdminPage('Dashboard',this)"><div class="abn-i">📊</div><div class="abn-l">Bosh</div></div>
+    <div class="abn-item" onclick="showAdminPage('Rooms',this)"><div class="abn-i">🛏️</div><div class="abn-l">Xona</div></div>
+    <div class="abn-item" onclick="showAdminPage('Patients',this)"><div class="abn-i">🏥</div><div class="abn-l">Bemor</div></div>
+    <div class="abn-item" onclick="showAdminPage('Food',this)"><div class="abn-i">🍽️</div><div class="abn-l">Taom</div></div>
+    <div class="abn-item" onclick="showAdminPage('Finance',this)"><div class="abn-i">💰</div><div class="abn-l">Moliya</div></div>
+    <div class="abn-item" onclick="showAdminPage('Bookings',this)"><div class="abn-i">📋</div><div class="abn-l">Bron</div></div>
+    <div class="abn-item" onclick="showAdminPage('Social',this)"><div class="abn-i">📣</div><div class="abn-l">Ijtimoiy</div></div>
+  </nav>
+</div>
+
+
+<div id="cloudModal" style="display:none;position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,0.7);align-items:flex-end;justify-content:center;">
+  <div style="background:var(--card);border-radius:20px 20px 0 0;padding:24px 20px;width:100%;max-width:500px;border-top:1px solid var(--border);">
+    <div style="width:40px;height:4px;background:var(--muted);border-radius:2px;margin:0 auto 16px;"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:4px;">☁️ Cloudinary sozlamalari</div>
+    <div style="font-size:12px;color:var(--muted2);margin-bottom:16px;">Rasmlar barcha qurilmalarda ko'rinishi uchun</div>
+    <div style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:12px;padding:12px;margin-bottom:14px;font-size:11px;color:var(--muted2);line-height:1.7;">
+      1. <a href="https://cloudinary.com/users/register/free" target="_blank" style="color:var(--accent);">cloudinary.com</a> ga ro'yxatdan o'ting (bepul)<br>
+      2. Dashboard → Cloud name ni nusxalang<br>
+      3. Settings → Upload → Add upload preset → Unsigned → Saqlang
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Cloud Name</div>
+    <input id="clCloudName" placeholder="masalan: demoabc123" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;margin-bottom:10px;">
+    <div style="font-size:11px;font-weight:700;color:var(--muted2);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Upload Preset</div>
+    <input id="clPreset" placeholder="masalan: ritm_unsigned" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:14px;color:var(--text);outline:none;margin-bottom:14px;">
+    <button onclick="saveCloudSettings()" style="width:100%;padding:13px;background:linear-gradient(135deg,#00b4c8,#007a8a);color:#fff;border:none;border-radius:13px;font-size:14px;font-weight:800;cursor:pointer;margin-bottom:8px;">💾 Saqlash</button>
+    <button onclick="document.getElementById('cloudModal').style.display='none'" style="width:100%;padding:11px;background:var(--card2);border:1px solid var(--border);color:var(--muted2);border-radius:13px;font-size:13px;font-weight:700;cursor:pointer;">Bekor qilish</button>
+  </div>
+</div>
+
+<div class="pat-overlay" id="patOverlay">
+  <div class="pat-sheet">
+    <div class="modal-handle"></div>
+    <div style="font-family:'Playfair Display',serif;font-size:18px;color:var(--white);font-weight:700;margin-bottom:4px;">🏥 Bemor ma'lumotlari</div>
+    <input type="hidden" id="patId">
+    <div class="pat-section-title">Shaxsiy ma'lumotlar</div>
+    <div class="pat-grid2">
+      <div class="pat-field"><div class="rf-lbl">Ismi</div><input class="rf-inp" id="patName" placeholder="Ism"></div>
+      <div class="pat-field"><div class="rf-lbl">Familiyasi</div><input class="rf-inp" id="patSurname" placeholder="Familiya"></div>
+    </div>
+    <div class="pat-grid2" style="margin-top:10px;">
+      <div class="pat-field"><div class="rf-lbl">Yoshi</div><input class="rf-inp" id="patAge" type="number" placeholder="25"></div>
+      <div class="pat-field"><div class="rf-lbl">Xona raqami</div><input class="rf-inp" id="patRoom" placeholder="101"></div>
+    </div>
+    <div class="pat-section-title">Manzil va diagnoz</div>
+    <div class="rf-lbl">Yashash manzili</div>
+    <input class="rf-inp" id="patAddress" placeholder="Shahar, tuman, ko'cha...">
+    <div class="rf-lbl">Diagnoz / kasallik</div>
+    <input class="rf-inp" id="patDiag" placeholder="Diagnoz...">
+    <div class="pat-section-title">Statsionar muddati</div>
+    <div class="pat-grid2">
+      <div><div class="rf-lbl">Kirgan sana</div><input type="date" class="rf-inp" id="patCheckIn"></div>
+      <div><div class="rf-lbl">Chiqish sanasi</div><input type="date" class="rf-inp" id="patCheckOut"></div>
+    </div>
+    <div class="rf-lbl">Izoh</div>
+    <textarea class="rf-inp" id="patNote" rows="2" placeholder="Qo'shimcha izoh..." style="resize:vertical;"></textarea>
+    <button class="btn-save" onclick="savePatient()">💾 Saqlash</button>
+    <button class="btn-rf-cancel" onclick="closePatientForm()">Bekor qilish</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toastIcon"></span><span id="toastMsg"></span></div>
+
+<script>
+
+
+
+// ── Setup: Login sahifasida Cloudinary sozlash ──
+function saveSetupCloud(){
+  const cloud = (document.getElementById('setupCloud').value||'').trim();
+  const preset = (document.getElementById('setupPreset').value||'').trim();
+  if(!cloud||!preset){ showToast('Ikkala maydon to\'ldiring!','⚠️'); return; }
+  localStorage.setItem('cl_cloud', cloud);
+  localStorage.setItem('cl_preset', preset);
+  const st = document.getElementById('setupCloudStatus');
+  if(st){ st.style.display='block'; }
+  showToast('Cloudinary sozlandi! ✅','☁️');
+}
+
+function initSetupCloudUI(){
+  const cloud = localStorage.getItem('cl_cloud')||'';
+  const preset = localStorage.getItem('cl_preset')||'';
+  const ci = document.getElementById('setupCloud');
+  const pi = document.getElementById('setupPreset');
+  const st = document.getElementById('setupCloudStatus');
+  if(ci) ci.value = cloud;
+  if(pi) pi.value = preset;
+  if(st && cloud && preset){ st.style.display='block'; }
+}
+
+let currentUser=null,currentRoom=null,currentSlide=0,editingRoomId=null,selSt='bosh';
+let rooms=[],bookings=[],clients=[],patients=[],food={},finance=[],buildings=[],_saveTimer=null;
+let finMonth=new Date().getMonth(),finYear=new Date().getFullYear();
+
+function fd(d){const dt=new Date();dt.setDate(dt.getDate()+d);return dt.toISOString().split('T')[0];}
+function fp(n){return Number(n).toLocaleString('uz-UZ')+" so'm";}
+function fdate(d){return d?new Date(d).toLocaleDateString('uz-UZ'):'—';}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2);}
+
+function saveSession(u,a){try{localStorage.setItem('rc_s',JSON.stringify({u,a,t:Date.now()}));}catch(e){}}
+function clearSession(){try{localStorage.removeItem('rc_s');}catch(e){}}
+function loadSession(){try{const r=localStorage.getItem('rc_s');if(!r)return null;const s=JSON.parse(r);if(Date.now()-s.t>365*864e5){clearSession();return null;}return s;}catch(e){return null;}}
+
+// ── To'g'ridan JSONBin API (GitHub Pages uchun) ──
+const JB_KEY = '$2a$10$mL3MSpFMzWUJJ1Q04wTUTuRVvdoZa.xh4CLP.9vFzPf6e0JSVNrCC';
+const JB_BASE = 'https://api.jsonbin.io/v3/b';
+const _FIXED_BIN_ID = '69a4da80d0ea881f40e5df3b';
+let _binId = _FIXED_BIN_ID;
+let _remoteData = null;
+let _saveTimeout = null;
+window.__STORAGE_CACHE__ = window.__STORAGE_CACHE__ || {};
+window.__DATA__ = window.__DATA__ || {};
+
+async function _ensureBin(){
+  if(_binId) return _binId;
+  try{
+    const res = await fetch(JB_BASE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JB_KEY,
+        'X-Bin-Name': 'ritm-clinic',
+        'X-Bin-Private': 'false'
+      },
+      body: JSON.stringify({_init: true})
+    });
+    const data = await res.json();
+    _binId = data.metadata && data.metadata.id ? data.metadata.id : null;
+  }catch(e){}
+  return _binId;
+}
+
+async function _fetchRemote(){
+  const bid = await _ensureBin();
+  if(!bid) return null;
+  try{
+    const res = await fetch(JB_BASE + '/' + bid + '/latest', {
+      headers: {'X-Master-Key': JB_KEY, 'X-Bin-Meta': 'false'}
+    });
+    if(!res.ok) return null;
+    const data = await res.json();
+    _remoteData = data.record || data;
+    Object.keys(_remoteData).forEach(k => {
+      if(k !== '_init'){
+        window.__STORAGE_CACHE__[k] = _remoteData[k];
+        window.__DATA__[k] = JSON.stringify(_remoteData[k]);
+      }
+    });
+    return _remoteData;
+  }catch(e){ return null; }
+}
+
+async function _pushRemote(){
+  const bid = await _ensureBin();
+  if(!bid || !_remoteData) return;
+  try{
+    const body = JSON.stringify(_remoteData);
+    if(body.length > 450000){
+      // Rasmlarni siqish
+      const compRooms = await compressRoomsImgs(_remoteData.rc_rooms || []);
+      _remoteData.rc_rooms = compRooms;
+      window.__STORAGE_CACHE__['rc_rooms'] = compRooms;
+    }
+    await fetch(JB_BASE + '/' + bid, {
+      method: 'PUT',
+      headers: {'Content-Type': 'application/json', 'X-Master-Key': JB_KEY},
+      body: JSON.stringify(_remoteData)
+    });
+  }catch(e){}
+}
+
+function _loadData(key, fallback){
+  if(window.__STORAGE_CACHE__[key] !== undefined) return window.__STORAGE_CACHE__[key];
+  if(window.__DATA__[key] !== undefined){
+    try{ return JSON.parse(window.__DATA__[key]); }catch(e){}
+  }
+  try{ const s = localStorage.getItem(key); if(s) return JSON.parse(s); }catch(e){}
+  return fallback;
+}
+
+async function _saveData(key, value){
+  window.__STORAGE_CACHE__[key] = value;
+  window.__DATA__[key] = JSON.stringify(value);
+  if(!_remoteData){
+    await _fetchRemote();
+    if(!_remoteData) _remoteData = {};
+  }
+  _remoteData[key] = value;
+  clearTimeout(_saveTimeout);
+  _saveTimeout = setTimeout(() => _pushRemote(), 500);
+  try{ localStorage.setItem(key, JSON.stringify(value)); }catch(e){}
+}
+
+// ── Kutish ro’yxati ──
+let waitRoomId=null;
+function openWaitModal(roomId){
+  waitRoomId=roomId;
+  const r=rooms.find(x=>x.id===roomId);if(!r)return;
+  document.getElementById('waitRoomInfo').textContent='Xona №'+r.num+' ('+r.type+' kishilik, '+(r.category||'standart')+') — hozir band';
+  document.getElementById('waitName').value=currentUser?currentUser.name:'';
+  document.getElementById('waitPhone').value=currentUser?currentUser.phone:'';
+  document.getElementById('waitNote').value='';
+  document.getElementById('waitModal').style.display='flex';
+}
+function closeWaitModal(){document.getElementById('waitModal').style.display='none';waitRoomId=null;}
+async function addToWaitList(){
+  const name=document.getElementById('waitName').value.trim();
+  const phone=document.getElementById('waitPhone').value.trim();
+  const note=document.getElementById('waitNote').value.trim();
+  if(!name||!phone){showToast('Ism va telefon kiriting!','⚠️');return;}
+  const r=rooms.find(x=>x.id===waitRoomId);if(!r)return;
+  if(!r.waitList)r.waitList=[];
+  r.waitList.push({id:uid(),name,phone,note,addedAt:Date.now()});
+  closeWaitModal();
+  showToast("Navbatga qo\u2019shildingiz! \u2705",'\u2705');
+  await persistAll();
+}
+
+function renderWaitList(){
+  const el=document.getElementById('waitListContent');if(!el)return;
+  const list=rooms.filter(r=>r.waitList&&r.waitList.length);
+  if(!list.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">⏳</div><h3>Kutish ro’yxati bo’sh</h3></div>';return;}
+  el.innerHTML=list.map(r=>
+    '<div class="arc" style="margin-bottom:12px;">'
+    +'<div class="arc-info"><div class="arc-num">Xona №'+r.num+'</div></div>'
+    +'<div style="padding:0 12px 12px;">'
+    +r.waitList.map((w,i)=>
+      '<div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border);">'
+      +'<div><div style="color:var(--white);font-size:13px;font-weight:700;">'+(i+1)+'. '+w.name+'</div>'
+      +'<div style="color:var(--muted2);font-size:11px;">'+w.phone+(w.note?' · '+w.note:'')+'</div></div>'
+      +'<div style="display:flex;gap:5px;">'+'<button onclick="callWait(\''+w.phone+'\')" title="Qo’ng’iroq" style="background:rgba(0,180,200,0.1);border:1px solid rgba(0,180,200,0.2);color:var(--accent);border-radius:8px;padding:5px 10px;font-size:14px;cursor:pointer;">📞</button>'+'<button onclick="sendSmsToWait(\''+w.phone+'\',\''+w.name+'\',\''+r.num+'\')" title="SMS" style="background:rgba(0,229,160,0.1);border:1px solid rgba(0,229,160,0.2);color:var(--accent2);border-radius:8px;padding:5px 10px;font-size:14px;cursor:pointer;">💬</button>'+'<button data-rid="'+r.id+'" data-wid="'+w.id+'" onclick="var b=this;removeWait(b.dataset.rid,b.dataset.wid)" style="background:rgba(255,64,96,0.1);border:1px solid rgba(255,64,96,0.2);color:var(--danger);border-radius:8px;padding:5px 10px;font-size:14px;cursor:pointer;">✕</button>'+'</div>'
+      +'</div>'
+    ).join('')
+    +'</div></div>'
+  ).join('');
+}
+async function removeWait(roomId,waitId){
+  const r=rooms.find(x=>x.id===roomId);if(!r)return;
+  r.waitList=r.waitList.filter(w=>w.id!==waitId);
+  renderWaitList();renderAdminRoomsMgmt();
+  await persistAll();
+}
+
+function scheduleSave(){clearTimeout(_saveTimer);_saveTimer=setTimeout(()=>persistAll(),800);}
+async function persistAll(){
+  let saveRooms = rooms;
+  const testSize = JSON.stringify({rooms,bookings,clients,patients,food,finance,buildings}).length;
+  if(testSize > 380000){
+    saveRooms = await compressRoomsImgs(rooms);
+  }
+  await _saveData('rc_rooms', saveRooms);
+  await _saveData('rc_bookings', bookings);
+  await _saveData('rc_clients', clients);
+  await _saveData('rc_patients', patients);
+  await _saveData('rc_food', food);
+  await _saveData('rc_finance', finance);
+  await _saveData('rc_buildings', buildings);
+  await _saveData('rc_ts', Date.now());
+  const ss=document.getElementById('syncStatus');
+  if(ss)ss.textContent='Sinxronlandi ✅';
+}
+
+async function compressRoomsImgs(roomList){
+  // Rasmlarni yanada kichraytirish — 200px, 0.3 sifat (~5KB)
+  const result = [];
+  for(const r of roomList){
+    if(!r.imgs||!r.imgs.length){ result.push(r); continue; }
+    const newImgs = [];
+    for(const src of r.imgs){
+      if(!src||!src.startsWith('data:')){ newImgs.push(src); continue; }
+      try{
+        const compressed = await new Promise(res=>{
+          const img = new Image();
+          img.onload = function(){
+            const MAX=200;
+            let w=img.width,h=img.height;
+            if(w>h){if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}}
+            else{if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}}
+            const c=document.createElement('canvas');
+            c.width=w;c.height=h;
+            c.getContext('2d').drawImage(img,0,0,w,h);
+            res(c.toDataURL('image/jpeg',0.3));
+          };
+          img.onerror=()=>res(src);
+          img.src=src;
+        });
+        newImgs.push(compressed);
+      }catch(e){ newImgs.push(src); }
+    }
+    result.push({...r, imgs:newImgs, img:newImgs[0]||null});
+  }
+  return result;
+}
+
+function mergeImgsIntoRooms(){
+  // Endi rasmlar to'g'ridan-to'g'ri rooms ichida saqlanadi
+  // localStorage rc_imgs dan migratsiya (eski versiya uchun)
+  try{
+    const raw=localStorage.getItem('rc_imgs');
+    if(!raw)return;
+    const imgs=JSON.parse(raw);
+    let changed=false;
+    rooms.forEach(r=>{
+      if(imgs[r.id]&&imgs[r.id].length&&(!r.imgs||!r.imgs.length)){
+        r.imgs=imgs[r.id];r.img=imgs[r.id][0]||null;changed=true;
+      }
+    });
+    if(changed){ localStorage.removeItem('rc_imgs'); persistAll(); }
+  }catch(e){}
+}
+
+function getDefaultBuildings(){
+  return [
+    {id:'bA',name:'A blok',desc:'Asosiy bino',floors:2,icon:'🏥'},
+    {id:'bB',name:'B blok',desc:'Qo’shimcha bino',floors:2,icon:'🏨'}
+  ];
+}
+
+function getDefaultRooms(){
+  const f3s=['Televizor','Konditsioner','Toza hojatxona','Wi-Fi','3 mahal ovqat','Fizioterapiya'];
+  const f3p=['Televizor','Konditsioner','Toza hojatxona','Wi-Fi','3 mahal ovqat','Fizioterapiya','Jakuziy'];
+  const f2s=['Televizor','Konditsioner','Shaxsiy hojatxona','Wi-Fi','3 mahal ovqat','Fizioterapiya'];
+  const f2p=['Televizor','Konditsioner','Shaxsiy hojatxona','Wi-Fi','3 mahal ovqat','Fizioterapiya','Jakuziy','Mini bar'];
+  const r=[];
+  for(let i=0;i<5;i++) r.push({id:'r'+String(i+1).padStart(2,'0'),num:String(101+i),type:3,category:'standart',blok:'bA',price:150000,icon:'🛏️',imgs:[],features:f3s,status:'bosh',orins:[{n:'1a',status:'bosh'},{n:'1b',status:'bosh'},{n:'1c',status:'bosh'}],checkoutDate:null});
+  for(let i=0;i<5;i++) r.push({id:'r'+String(i+6).padStart(2,'0'),num:String(106+i),type:3,category:'premium',blok:'bA',price:180000,icon:'⭐',imgs:[],features:f3p,status:'bosh',orins:[{n:'1a',status:'bosh'},{n:'1b',status:'bosh'},{n:'1c',status:'bosh'}],checkoutDate:null});
+  for(let i=0;i<4;i++) r.push({id:'r'+String(i+11).padStart(2,'0'),num:String(201+i),type:2,category:'standart',blok:'bB',price:150000,icon:'🛏️',imgs:[],features:f2s,status:'bosh',orins:[{n:'1a',status:'bosh'},{n:'1b',status:'bosh'}],checkoutDate:null});
+  for(let i=0;i<3;i++) r.push({id:'r'+String(i+15).padStart(2,'0'),num:String(205+i),type:2,category:'premium',blok:'bB',price:180000,icon:'💎',imgs:[],features:f2p,status:'bosh',orins:[{n:'1a',status:'bosh'},{n:'1b',status:'bosh'}],checkoutDate:null});
+  return r;
+}
+
+async function loadAllData(){
+  // Deploy3 uslubi: server dan yukla, keyin lokal
+  await _fetchRemote();
+  rooms    = _loadData('rc_rooms',    null) || getDefaultRooms();
+  bookings = _loadData('rc_bookings', []);
+  clients  = _loadData('rc_clients',  []);
+  patients = _loadData('rc_patients', []);
+  food     = _loadData('rc_food',     null) || getDefaultFood();
+  finance  = _loadData('rc_finance',  []);
+  buildings= _loadData('rc_buildings',null) || getDefaultBuildings();
+  if(!rooms.length){
+    rooms=getDefaultRooms();bookings=[];clients=[];patients=[];
+    food=getDefaultFood();finance=[];buildings=getDefaultBuildings();
+    await persistAll();
+  }
+}
+
+function startPolling(){
+  setInterval(async()=>{
+    try{
+      await _fetchRemote();
+      const newRooms    = _loadData('rc_rooms',    null);
+      const newBookings = _loadData('rc_bookings', null);
+      const newTs       = _loadData('rc_ts',       0);
+      const curTs       = window.__STORAGE_CACHE__['rc_ts_prev'] || 0;
+      if(newTs && newTs !== curTs){
+        window.__STORAGE_CACHE__['rc_ts_prev'] = newTs;
+        if(newRooms)    rooms    = newRooms;
+        if(newBookings) bookings = newBookings;
+        const newClients  = _loadData('rc_clients',  null);
+        const newPatients = _loadData('rc_patients', null);
+        const newFood     = _loadData('rc_food',     null);
+        const newFinance  = _loadData('rc_finance',  null);
+        const newBuildings= _loadData('rc_buildings',null);
+        if(newClients)   clients   = newClients;
+        if(newPatients)  patients  = newPatients;
+        if(newFood)      food      = newFood;
+        if(newFinance)   finance   = newFinance;
+        if(newBuildings) buildings = newBuildings;
+        renderHomeInfo(); renderAlerts();
+        if(currentSlide===1) renderAllRooms();
+        if(currentSlide===3) renderPublicFood();
+        if(currentSlide===5) renderMyBookings();
+      }
+    }catch(e){}
+  }, 15000);
+}
+
+function showLoading(msg){document.getElementById('loadingText').textContent=msg||'Yuklanmoqda...';document.getElementById('loadingOverlay').style.display='flex';}
+function hideLoading(){document.getElementById('loadingOverlay').style.display='none';}
+
+function goSlide(idx){
+  currentSlide=idx;
+  document.getElementById('slidesTrack').style.transform='translateX(-'+idx*100+'vw)';
+  var items=document.querySelectorAll('.bnav-item');
+  items.forEach((b,i)=>b.classList.toggle('active',i===idx));
+
+  if(idx===0){renderHomeInfo();renderAlerts();}
+  if(idx===1)renderAllRooms();
+  if(idx===3)renderPublicFood();
+  if(idx===5)renderMyBookings();
+}
+
+// Narx kategoriyalar
+function switchPriceCat(cat,el){
+  document.querySelectorAll('.pct').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  ['xona','xizmat','qoshimcha'].forEach(c=>{
+    var s=document.getElementById('pcat-'+c);
+    if(s)s.style.display=c===cat?'block':'none';
+  });
+}
+
+// Qulaylik kategoriyalar
+function switchAmCat(cat,el){
+  document.querySelectorAll('.am-cat-tab').forEach(t=>t.classList.remove('am-cat-active'));
+  el.classList.add('am-cat-active');
+  ['tibbiy','dam','xona'].forEach(c=>{
+    var s=document.getElementById('amcat-'+c);
+    if(s)s.style.display=c===cat?'block':'none';
+  });
+}
+
+// Litsenziya kategoriyalar
+function switchLicCat(cat,el){
+  document.querySelectorAll('.lct').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  document.querySelectorAll('#licList .lic-item').forEach(function(item){
+    if(cat==='barchasi'){item.style.display='flex';}
+    else{item.style.display=item.dataset.cat===cat?'flex':'none';}
+  });
+}
+
+function switchLTab(tab){
+  document.querySelectorAll('.ltab').forEach((t,i)=>t.classList.toggle('active',tab==='client'?i===0:i===1));
+  document.getElementById('clientForm').style.display=tab==='client'?'block':'none';
+  document.getElementById('adminForm').style.display=tab==='admin'?'block':'none';
+}
+function togglePw(){const i=document.getElementById('aPass');i.type=i.type==='password'?'text':'password';}
+
+async function clientLogin(){
+  const fn=document.getElementById('lFname').value.trim();
+  const ln=document.getElementById('lLname').value.trim();
+  const ph=document.getElementById('lPhone').value.trim();
+  if(!fn||!ln||!ph){showErr('Ism, familiya va telefon kiriting!');return;}
+  currentUser={name:fn+' '+ln,phone:ph};
+  const ex=clients.find(c=>c.phone===ph);
+  if(ex)ex.visits=(ex.visits||0)+1;
+  else clients.push({name:fn+' '+ln,phone:ph,visits:0});
+  scheduleSave();saveSession(currentUser,false);enterMain(fn);
+}
+
+function adminLogin(){
+  if(document.getElementById('aLogin').value==='admin'&&document.getElementById('aPass').value==='admin123'){
+    saveSession(null,true);showScreen('adminScreen');renderAdminDashboard();
+  }else showErr("Login yoki parol noto\'g\'ri!");
+}
+
+function showErr(msg){const e=document.getElementById('lErr');e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',3000);}
+function logout(){currentUser=null;clearSession();showScreen('loginScreen');}
+function adminLogout(){clearSession();showScreen('loginScreen');}
+
+function showBinId(){
+  const id=JB_BIN||'(hali yaratilmagan — biror narsa saqlang)';
+  const msg='JSONBin Bin ID:\n\n'+id+'\n\nBu ID ni boshqa qurilmada ishlatish uchun:\nLogin sahifasida "Bin ID" maydoniga kiriting.';
+  alert(msg);
+}
+
+function setBinId(id){
+  id=(id||'').trim();
+  if(!id)return;
+  JB_BIN=id;
+  localStorage.setItem('rc_bin',id);
+  showToast('Bin ID saqlandi! Yuklanmoqda...','🔗');
+  setTimeout(()=>location.reload(),1000);
+}
+function enterMain(fn){
+  try{document.getElementById('userName').textContent=fn;}catch(e){}
+  try{document.getElementById('userAv').textContent=fn[0].toUpperCase();}catch(e){}
+  showScreen('mainScreen');
+  try{goSlide(0);}catch(e){}
+  try{renderHomeInfo();}catch(e){}
+  try{renderAlerts();}catch(e){}
+  try{renderPublicFood();}catch(e){}
+}
+
+function renderHomeInfo(){
+  const total=rooms.length,avail=rooms.filter(r=>r.status==='bosh').length,occ=rooms.filter(r=>r.status==='band').length;
+  const el=document.getElementById('homeInfoStrip');if(!el)return;
+  el.innerHTML='<div class="ic blue"><div class="ic-icon">🏥</div><div class="ic-val">'+total+'</div><div class="ic-lbl">Jami</div></div><div class="ic green"><div class="ic-icon">✅</div><div class="ic-val">'+avail+'</div><div class="ic-lbl">Bosh</div></div><div class="ic red"><div class="ic-icon">🔴</div><div class="ic-val">'+occ+'</div><div class="ic-lbl">Band</div></div>';
+}
+
+function renderAlerts(){
+  const cont=document.getElementById('alertBanners');if(!cont)return;cont.innerHTML='';
+  rooms.forEach(r=>{if(r.status==='soon'&&r.checkoutDate){const diff=Math.ceil((new Date(r.checkoutDate)-new Date())/864e5);const d=document.createElement('div');d.className='alert-banner';d.innerHTML='<div class="alert-icon">⚠️</div><div><div class="alert-title">Xona №'+r.num+' — '+(diff<=1?"Ertaga bo\'shaydi":diff+" kun keyin")+'</div><div class="alert-desc">'+fdate(r.checkoutDate)+'</div></div>';cont.appendChild(d);}});
+}
+
+function getAv(r){
+  if(r.status==='bosh')return{text:"Bo\'sh",cls:'bosh',rc:'rb-bosh',rac:'ra-bosh',em:'🟢'};
+  if(r.status==='soon'){const d=r.checkoutDate?Math.ceil((new Date(r.checkoutDate)-new Date())/864e5):0;return{text:d<=1?"Ertaga bo\'shaydi":d+" kun keyin",cls:'soon',rc:'rb-soon',rac:'ra-soon',em:'🟡'};}
+  return{text:'Band',cls:'band',rc:'rb-band',rac:'ra-band',em:'🔴'};
+}
+
+function roomCard(r){
+  var av=getAv(r);
+  var dis=r.status!=='bosh';
+  var imgs=(r.imgs&&r.imgs.length)?r.imgs:(r.img?[r.img]:[]);
+  var sliderHtml='';
+  if(imgs.length>0){
+    sliderHtml='<div class="room-slider" id="rs-'+r.id+'" ontouchstart="touchStart(event,\''+r.id+'\')" ontouchend="touchEnd(event,\''+r.id+'\')">'
+      +'<div class="room-slides" id="rsl-'+r.id+'">'
+      +imgs.map(function(src){return '<img class="room-slide-img" src="'+src+'" alt="" onerror="this.style.display=\'none\'">';}).join('')
+      +'</div>';
+    if(imgs.length>1){
+      sliderHtml+='<button class="slider-arr prev" onclick="slideImg(event,\''+r.id+'\',-1)">\u2039</button>';
+      sliderHtml+='<button class="slider-arr next" onclick="slideImg(event,\''+r.id+'\',1)">\u203a</button>';
+      sliderHtml+='<div class="slider-count" id="sc-'+r.id+'">1 / '+imgs.length+'</div>';
+      sliderHtml+='<div class="slider-dots">'+imgs.map(function(_,i){return '<div class="sdot'+(i===0?' active':'')+'" id="sd-'+r.id+'-'+i+'"></div>';}).join('')+'</div>';
+    }
+    sliderHtml+='<span class="room-badge '+av.rc+'">'+av.em+' '+av.text+'</span></div>';
+  } else {
+    sliderHtml='<div class="room-img"><div class="room-img-emoji">'+r.icon+'</div><span class="room-badge '+av.rc+'">'+av.em+' '+av.text+'</span></div>';
+  }
+  return '<div class="room-card">'
+    +sliderHtml
+    +'<div class="room-body">'
+    +'<div class="room-num">Xona \u2116'+r.num+'</div>'
+    +'<div class="room-name">'+r.type+' kishilik xona</div>'
+    +'<div class="room-features">'+(r.features||[]).slice(0,4).map(function(f){return '<span class="feature">\u2713 '+f+'</span>';}).join('')+'</div>'
+    +'<div class="room-footer">'
+    +'<div class="room-price">'
+    +'<div class="room-avail '+av.rac+'">'+av.em+' '+av.text+'</div>'
+    +'<div class="price">'+fp(r.price)+'</div>'
+    +'<div class="per">kunlik / kishi</div>'
+    +'</div>'
+    +'<button class="btn-book" '+(dis?'disabled':'')+' data-rid="'+r.id+'" onclick="openBookingById(this.dataset.rid)">'
+    +(dis?av.text:'Bron qilish')
+    +'</button>'
+    +'</div></div></div>';
+}
+
+var _slideIdx={},_touchStartX={};
+function touchStart(e,rid){_touchStartX[rid]=e.changedTouches[0].clientX;}
+function touchEnd(e,rid){
+  var dx=e.changedTouches[0].clientX-(_touchStartX[rid]||0);
+  if(Math.abs(dx)>40)slideImg(e,rid,dx<0?1:-1);
+}
+function slideImg(e,rid,dir){
+  e.stopPropagation();
+  var track=document.getElementById('rsl-'+rid);
+  if(!track)return;
+  var imgs=track.querySelectorAll('.room-slide-img');
+  var n=imgs.length;if(!n)return;
+  if(_slideIdx[rid]===undefined)_slideIdx[rid]=0;
+  _slideIdx[rid]=(_slideIdx[rid]+dir+n)%n;
+  track.style.transform='translateX(-'+(_slideIdx[rid]*100)+'%)';
+  var cnt=document.getElementById('sc-'+rid);
+  if(cnt)cnt.textContent=(_slideIdx[rid]+1)+' / '+n;
+  for(var i=0;i<n;i++){
+    var dot=document.getElementById('sd-'+rid+'-'+i);
+    if(dot)dot.classList.toggle('active',i===_slideIdx[rid]);
+  }
+}
+
+function renderAllRooms(filter){
+  filter=filter||'all';
+  const cont=document.getElementById('allRooms');if(!cont)return;
+  let f=rooms;
+  if(filter==='2')f=rooms.filter(r=>r.type==2);
+  else if(filter==='3')f=rooms.filter(r=>r.type==3);
+  else if(filter==='bosh')f=rooms.filter(r=>r.status==='bosh');
+  else if(filter!=='all'&&filter!=='2'&&filter!=='3'&&filter!=='bosh'&&filter!=='premium')f=rooms.filter(r=>r.blok===filter);
+  else if(filter==='premium')f=rooms.filter(r=>r.category==='premium');
+  cont.innerHTML=f.length?f.map(roomCard).join(''):'<div class="empty-state"><div class="empty-icon">🛏️</div><h3>Xona topilmadi</h3></div>';
+}
+
+function filterRooms(f,el){document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));el.classList.add('active');renderAllRooms(f);}
+
+function openBookingById(id){ openBooking(id); }
+function openBooking(roomId){
+  if(!currentUser){showToast('Avval tizimga kiring!','⚠️');return;}
+  currentRoom=rooms.find(r=>r.id==roomId);if(!currentRoom)return;
+  document.getElementById('modalRoomInfo').innerHTML='<div><div class="mr-title">Xona №'+currentRoom.num+' — '+currentRoom.type+' kishilik</div><div class="mr-sub">'+(currentRoom.features||[]).slice(0,3).join(' · ')+'</div></div><div class="mr-price">'+fp(currentRoom.price)+'<span style="font-size:10px;color:var(--muted2)">/kun</span></div>';
+  const today=new Date().toISOString().split('T')[0];
+  const tom=new Date();tom.setDate(tom.getDate()+1);
+  document.getElementById('bookStart').value=today;document.getElementById('bookStart').min=today;
+  document.getElementById('bookEnd').value='';document.getElementById('bookEnd').min=tom.toISOString().split('T')[0];
+  document.getElementById('costCalc').style.display='none';
+  document.getElementById('bookingModal').classList.add('open');
+}
+
+function closeModal(){document.getElementById('bookingModal').classList.remove('open');}
+
+function calcCost(){
+  const s=document.getElementById('bookStart').value,e=document.getElementById('bookEnd').value;
+  if(!s||!e)return;
+  const days=Math.ceil((new Date(e)-new Date(s))/864e5);
+  if(days<=0){document.getElementById('costCalc').style.display='none';return;}
+  document.getElementById('costPrice').textContent=fp(currentRoom.price)+'/kun';
+  document.getElementById('costDays').textContent=days+' kun';
+  document.getElementById('costTotal').textContent=fp(days*currentRoom.price*currentRoom.type);
+  document.getElementById('costCalc').style.display='block';
+}
+
+async function confirmBooking(){
+  const s=document.getElementById('bookStart').value,e=document.getElementById('bookEnd').value;
+  if(!s||!e){showToast("Sanalarni to\'ldiring!",'⚠️');return;}
+  const days=Math.ceil((new Date(e)-new Date(s))/864e5);
+  if(days<=0){showToast("Sanalar noto\'g\'ri!",'⚠️');return;}
+  showLoading("Bron saqlanmoqda...");
+  const booking={id:uid(),roomId:currentRoom.id,roomNum:currentRoom.num,roomType:currentRoom.type,client:currentUser.name,phone:currentUser.phone,start:s,end:e,days,total:days*currentRoom.price*currentRoom.type,status:'confirmed',createdAt:Date.now()};
+  const ri=rooms.findIndex(r=>r.id===currentRoom.id);
+  if(ri>=0){rooms[ri].status='band';rooms[ri].checkoutDate=e;}
+  bookings.push(booking);
+  // Avtomatik kirim moliyaga qo'shish
+  const finEntry={id:uid(),type:'income',desc:'Xona №'+currentRoom.num+' bron — '+currentUser.name+' ('+days+' kun)',amt:booking.total,date:new Date().toISOString(),bookingId:booking.id};
+  finance.push(finEntry);
+  hideLoading();closeModal();
+  showToast('Xona №'+currentRoom.num+' bron qilindi! 🎉','✅');
+  renderHomeInfo();renderAlerts();
+  await persistAll();
+}
+
+function calcBookingCountdown(b){
+  const now=new Date();
+  now.setHours(0,0,0,0);
+  const start=new Date(b.start);start.setHours(0,0,0,0);
+  const end=new Date(b.end);end.setHours(0,0,0,0);
+  const totalDays=Math.round((end-start)/864e5);
+  const daysLeft=Math.round((end-now)/864e5);
+  const daysPassed=Math.round((now-start)/864e5);
+  const msLeft=new Date(b.end+'T23:59:59')-new Date();
+  const isExpired=daysLeft<0;
+  const isToday=daysLeft===0;
+  const notStarted=now<start;
+  let pct=0;
+  if(!notStarted&&!isExpired){pct=Math.min(100,Math.max(0,Math.round(daysPassed/totalDays*100)));}
+  else if(isExpired){pct=100;}
+  let color='var(--accent2)';let cls='ok';
+  if(isExpired){color='var(--danger)';cls='urgent';}
+  else if(daysLeft<=2){color='var(--danger)';cls='urgent';}
+  else if(daysLeft<=5){color='var(--warn)';cls='warn';}
+  let h=0,m=0,s=0;
+  if(!isExpired&&msLeft>0){
+    const sec=Math.floor(msLeft/1000);
+    h=Math.floor(sec/3600);m=Math.floor((sec%3600)/60);s=sec%60;
+  }
+  return{totalDays,daysLeft,daysPassed,pct,color,cls,isExpired,isToday,notStarted,h,m,s};
+}
+
+function renderMyBookings(){
+  var cont=document.getElementById('myBookingsList');if(!cont)return;
+  if(!currentUser){cont.innerHTML='<div class="empty-state"><div class="empty-icon">🔒</div><h3>Kirish kerak</h3></div>';return;}
+  var myB=bookings.filter(function(b){return b.phone===currentUser.phone;}).sort(function(a,b){return new Date(b.start)-new Date(a.start);});
+  if(!myB.length){cont.innerHTML='<div class="empty-state"><div class="empty-icon">📋</div><h3>Bronlar yo\'q</h3><p>Hali xona bron qilmagansiz.</p></div>';return;}
+  cont.innerHTML=myB.map(function(b){
+    var cd=calcBookingCountdown(b);
+    var cardCls=cd.isExpired?'bk-card-expired':(!cd.notStarted?'bk-card-active':'');
+    var statusBadge='';
+    if(cd.isExpired) statusBadge='<span class="bk-st" style="background:rgba(255,64,96,0.1);color:var(--danger);border-color:rgba(255,64,96,0.2);">✗ Tugagan</span>';
+    else if(cd.notStarted) statusBadge='<span class="bk-st" style="background:rgba(240,165,0,0.1);color:var(--gold);border-color:rgba(240,165,0,0.2);">⏳ Kutilmoqda</span>';
+    else statusBadge='<span class="bk-st">✓ Faol</span>';
+    var progressBlock='';
+    if(!cd.notStarted){
+      var leftTxt='';
+      if(cd.isExpired) leftTxt='<span style="color:var(--danger)">Muddati tugagan</span>';
+      else if(cd.isToday) leftTxt='<span style="color:var(--gold)">Bugun chiqish!</span>';
+      else leftTxt='<span style="color:'+cd.color+'">'+cd.daysLeft+' kun qoldi</span>';
+      var cdHtml='';
+      if(!cd.isExpired){
+        cdHtml='<div class="bk-countdown">'
+          +'<div class="bk-cd-box '+cd.cls+'"><div class="bk-cd-num" id="cdH_'+b.id+'">'+String(cd.h).padStart(2,'0')+'</div><div class="bk-cd-lbl">soat</div></div>'
+          +'<div class="bk-cd-box '+cd.cls+'"><div class="bk-cd-num" id="cdM_'+b.id+'">'+String(cd.m).padStart(2,'0')+'</div><div class="bk-cd-lbl">daqiqa</div></div>'
+          +'<div class="bk-cd-box '+cd.cls+'"><div class="bk-cd-num" id="cdS_'+b.id+'">'+String(cd.s).padStart(2,'0')+'</div><div class="bk-cd-lbl">soniya</div></div>'
+          +'</div>';
+      } else {
+        cdHtml='<div class="bk-expired-banner">🏁 Bron muddati tugadi</div>';
+      }
+      var todayBanner=cd.isToday&&!cd.isExpired?'<div class="bk-today-banner">⚠️ Bugun chiqish kuni! Xonani bo\'shatishni unutmang</div>':'';
+      progressBlock='<div class="bk-progress-wrap">'
+        +'<div class="bk-progress-labels">'
+        +'<span class="bk-progress-left">'+cd.daysPassed+' kun o\'tdi / '+cd.totalDays+' kun</span>'
+        +leftTxt
+        +'</div>'
+        +'<div class="bk-progress-bar"><div class="bk-progress-fill" style="width:'+cd.pct+'%;background:'+cd.color+';"></div></div>'
+        +cdHtml+todayBanner
+        +'</div>';
+    } else {
+      var daysToStart=Math.round((new Date(b.start)-new Date())/864e5)+1;
+      progressBlock='<div class="bk-progress-wrap"><div class="bk-progress-labels"><span class="bk-progress-left" style="color:var(--gold)">Kirish sanasi: '+fdate(b.start)+'</span><span style="color:var(--gold);font-size:11px;font-weight:800;">'+daysToStart+' kundan keyin</span></div></div>';
+    }
+    var icon=cd.isExpired?'🏁':cd.notStarted?'⏳':'🏥';
+    return '<div class="booking-card '+cardCls+'">'
+      +'<div style="width:100%">'
+      +'<div style="display:flex;gap:12px;align-items:flex-start">'
+      +'<div class="bk-icon-wrap">'+icon+'</div>'
+      +'<div class="bk-info">'
+      +'<div class="bk-room">Xona \u2116'+b.roomNum+' \u2014 '+b.roomType+' kishilik</div>'
+      +'<div class="bk-dates">\uD83D\uDCC5 '+fdate(b.start)+' \u2192 '+fdate(b.end)+' ('+b.days+' kun)</div>'
+      +'</div>'
+      +'<div class="bk-right">'
+      +'<div class="bk-cost">'+fp(b.total)+'</div>'
+      +statusBadge
+      +'</div>'
+      +'</div>'
+      +progressBlock
+      +'</div>'
+      +'</div>';
+  }).join('');
+  startBookingCountdowns(myB);
+}
+
+function startBookingCountdowns(bookingList){
+  if(window._cdInterval) clearInterval(window._cdInterval);
+  window._cdInterval=setInterval(function(){
+    bookingList.forEach(function(b){
+      var hEl=document.getElementById('cdH_'+b.id);
+      var mEl=document.getElementById('cdM_'+b.id);
+      var sEl=document.getElementById('cdS_'+b.id);
+      if(!hEl||!mEl||!sEl)return;
+      var msLeft=new Date(b.end+'T23:59:59')-new Date();
+      if(msLeft<=0){hEl.textContent='00';mEl.textContent='00';sEl.textContent='00';return;}
+      var sec=Math.floor(msLeft/1000);
+      hEl.textContent=String(Math.floor(sec/3600)).padStart(2,'0');
+      mEl.textContent=String(Math.floor((sec%3600)/60)).padStart(2,'0');
+      sEl.textContent=String(sec%60).padStart(2,'0');
+    });
+  },1000);
+}
+
+
+
+// ─────────────────────────────────────
+// BINOLAR
+// ─────────────────────────────────────
+function updateBuildingSelect(){
+  const sel=document.getElementById('rfBlok');if(!sel)return;
+  const blds=buildings.length?buildings:getDefaultBuildings();
+  sel.innerHTML=blds.map(b=>'<option value="'+b.id+'">'+(b.icon||'')+' '+b.name+'</option>').join('');
+}
+function renderBuildingsList(){
+  const el=document.getElementById('buildingsList');if(!el)return;
+  const blds=buildings.length?buildings:getDefaultBuildings();
+  if(!blds.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏥</div><h3>Binolar yo’q</h3></div>';return;}
+  el.innerHTML=blds.map(b=>{
+    const bRooms=rooms.filter(r=>r.blok===b.id);
+    const bosh=bRooms.filter(r=>r.status==='bosh').length;
+    return '<div class="arc" style="padding:14px;">'
+      +'<div style="display:flex;align-items:center;gap:12px;">'
+      +'<span style="font-size:32px;">'+(b.icon||'🏥')+'</span>'
+      +'<div style="flex:1;">'
+      +'<div class="arc-num">'+b.name+'</div>'
+      +'<div class="arc-name">'+(b.desc||'')+' · '+b.floors+' qavat</div>'
+      +'<div style="font-size:11px;color:var(--accent);margin-top:3px;">'+bRooms.length+' xona · '+bosh+' bo’sh</div>'
+      +'</div>'
+      +'<div style="display:flex;gap:6px;">'
+      +'<button class="arc-btn ed" onclick="openBuildingForm(\"'+b.id+'\")">✏️</button>'
+      +'<button class="arc-btn dl" onclick="deleteBuilding(\"'+b.id+'\")">🗑</button>'
+      +'</div></div></div>';
+  }).join('');
+}
+function openBuildingForm(id){
+  const el=document.getElementById('buildingFormModal');
+  if(id){
+    const b=buildings.find(x=>x.id===id);if(!b)return;
+    document.getElementById('bfTitle').textContent=b.name+' tahrirlash';
+    document.getElementById('bfId').value=b.id;
+    document.getElementById('bfName').value=b.name;
+    document.getElementById('bfDesc').value=b.desc||'';
+    document.getElementById('bfFloors').value=b.floors||2;
+    document.getElementById('bfIcon').value=b.icon||'🏥';
+  } else {
+    document.getElementById('bfTitle').textContent='Yangi bino';
+    ['bfId','bfName','bfDesc'].forEach(x=>document.getElementById(x).value='');
+    document.getElementById('bfFloors').value=2;
+    document.getElementById('bfIcon').value='🏥';
+  }
+  el.classList.add('open');
+}
+function closeBuildingForm(){document.getElementById('buildingFormModal').classList.remove('open');}
+async function saveBuilding(){
+  const id=document.getElementById('bfId').value;
+  const name=document.getElementById('bfName').value.trim();
+  const desc=document.getElementById('bfDesc').value.trim();
+  const floors=parseInt(document.getElementById('bfFloors').value)||2;
+  const icon=document.getElementById('bfIcon').value.trim()||'🏥';
+  if(!name){showToast('Bino nomini kiriting!','⚠️');return;}
+  if(id){
+    const b=buildings.find(x=>x.id===id);
+    if(b){b.name=name;b.desc=desc;b.floors=floors;b.icon=icon;}
+  } else {
+    buildings.push({id:'b'+uid(),name,desc,floors,icon});
+  }
+  closeBuildingForm();renderBuildingsList();updateBuildingSelect();
+  showToast(name+' saqlandi ✅','✅');
+  await persistAll();
+}
+async function deleteBuilding(id){
+  const b=buildings.find(x=>x.id===id);if(!b)return;
+  if(rooms.some(r=>r.blok===id)){showToast('Bu binoda xonalar bor!','⚠️');return;}
+  if(!confirm(b.name+' o’chirilsin?'))return;
+  buildings=buildings.filter(x=>x.id!==id);
+  renderBuildingsList();updateBuildingSelect();
+  await persistAll();
+}
+
+// ─────────────────────────────────────
+// QIDIRUV
+// ─────────────────────────────────────
+function publicSearch(q){
+  const res=document.getElementById('searchResults');if(!res)return;
+  q=(q||'').trim().toLowerCase();
+  if(!q){res.style.display='none';renderAllRooms();return;}
+  const found=rooms.filter(r=>String(r.num).includes(q)||
+    (buildings.find(b=>b.id===r.blok)||{name:''}).name.toLowerCase().includes(q));
+  const pts=patients.filter(p=>
+    ((p.name||'')+' '+(p.surname||'')).toLowerCase().includes(q)||(p.phone||'').includes(q));
+  if(!found.length&&!pts.length){
+    res.style.display='block';
+    res.innerHTML='<div style="padding:12px;color:var(--muted2);text-align:center;">Topilmadi</div>';
+    return;
+  }
+  let html='';
+  found.forEach(r=>{
+    const av=getAv(r);
+    html+='<div onclick="closeSearch();renderAllRooms();" style="padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">'
+      +'<span style="font-size:20px;">'+(r.icon||'🛏️')+'</span>'
+      +'<div style="flex:1;"><div style="color:var(--white);font-weight:700;">Xona №'+r.num+'</div>'
+      +'<div style="color:var(--muted2);font-size:11px;">'+r.type+' kishilik · '+av.text+'</div></div>'
+      +'<span class="rc-badge '+(r.category==='premium'?'prem':'std')+'">'+(r.category==='premium'?'⭐ Premium':'Standart')+'</span></div>';
+  });
+  pts.forEach(p=>{
+    html+='<div style="padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;">'
+      +'<span style="font-size:20px;">🏥</span>'
+      +'<div><div style="color:var(--white);font-weight:700;">'+(p.name||'')+' '+(p.surname||'')+'</div>'
+      +'<div style="color:var(--muted2);font-size:11px;">'+(p.phone||'')+' · Xona '+(p.room||'?')+'</div></div></div>';
+  });
+  res.innerHTML=html;
+  res.style.display='block';
+}
+function closeSearch(){
+  const r=document.getElementById('searchResults');if(r)r.style.display='none';
+  const i=document.getElementById('publicSearchInp');if(i)i.value='';
+}
+
+function searchRooms(q){
+  q=(q||'').trim().toLowerCase();
+  if(!q){renderAdminRoomsMgmt();return;}
+  const found=rooms.filter(r=>
+    String(r.num).toLowerCase().includes(q)||
+    (buildings.find(b=>b.id===r.blok)||{name:''}).name.toLowerCase().includes(q)||
+    (r.category||'').includes(q)||
+    patients.some(p=>p.room===r.num&&(((p.name||'')+' '+(p.surname||'')).toLowerCase().includes(q)||(p.phone||'').includes(q)))
+  );
+  const grid=document.getElementById('adminRoomsMgmtGrid');if(!grid)return;
+  if(!found.length){grid.innerHTML='<div class="empty-state"><div class="empty-icon">🔍</div><h3>Topilmadi</h3></div>';return;}
+  grid.innerHTML=found.map(r=>{
+    const av=getAv(r);
+    const imgHtml=r.imgs&&r.imgs[0]?'<img src="'+r.imgs[0]+'" style="width:100%;height:80px;object-fit:cover;border-radius:10px 10px 0 0;">'
+      :'<div style="height:50px;display:flex;align-items:center;justify-content:center;font-size:32px;">'+(r.icon||'🛏️')+'</div>';
+    const bName=(buildings.find(b=>b.id===r.blok)||{}).name||'';
+    // Band bo'lgan xona uchun joriy bron ma'lumotlari
+    const curBron=r.status==='band'?bookings.find(b=>b.roomId===r.id&&new Date(b.end)>=new Date()):null;
+    let bronInfo='';
+    if(curBron){
+      const now2=new Date();now2.setHours(0,0,0,0);
+      const end2=new Date(curBron.end);end2.setHours(0,0,0,0);
+      const left=Math.round((end2-now2)/864e5);
+      const clr=left<=2?'#ff4060':left<=5?'#f59e0b':'#00e5a0';
+      const pct=Math.min(100,Math.round((new Date()-new Date(curBron.start))/(new Date(curBron.end)-new Date(curBron.start))*100));
+      bronInfo='<div style="font-size:10px;color:var(--muted2);margin-top:3px;">👤 '+curBron.client+' · 📅 '+fdate(curBron.start)+' → '+fdate(curBron.end)+'</div>'
+        +'<div style="font-size:10px;margin-top:2px;font-weight:800;color:'+clr+';">'+left+' kun qoldi</div>'
+        +'<div style="height:4px;background:var(--muted);border-radius:2px;margin-top:4px;"><div style="height:100%;width:'+pct+'%;background:'+clr+';border-radius:2px;"></div></div>';
+    } else if(r.status==='soon'&&r.checkoutDate){
+      bronInfo='<div style="font-size:10px;color:#f59e0b;margin-top:3px;">📅 Bo\'shash: '+fdate(r.checkoutDate)+'</div>';
+    }
+    return '<div class="arc">'+imgHtml
+      +'<div class="arc-info"><div class="arc-num">Xona №'+r.num+(bName?' <small style="font-size:9px;color:var(--muted2);">'+bName+'</small>':'')+'</div>'
+      +'<div class="arc-name">'+(r.category==='premium'?'⭐ ':'')+r.type+' kishi · '+fp(r.price)+'/kun</div>'
+      +'<span class="arc-st '+av.cls+'">'+av.em+' '+av.text+'</span>'
+      +bronInfo+'</div>'
+      +'<div class="arc-actions">'
+      +'<button class="arc-btn av" data-id="'+r.id+'" data-st="bosh" onclick="setRoomSt(this.dataset.id,this.dataset.st)">✅ Bosh</button>'
+      +'<button class="arc-btn bsy" data-id="'+r.id+'" data-st="band" onclick="setRoomSt(this.dataset.id,this.dataset.st)">🔴 Band</button>'
+      +'<button class="arc-btn ed" data-id="'+r.id+'" onclick="openRoomForm(this.dataset.id)">✏️</button>'
+      +'<button class="arc-btn dl" data-id="'+r.id+'" onclick="deleteRoom(this.dataset.id)">🗑</button>'
+      +'</div></div>';
+  }).join('');
+}
+
+// ─────────────────────────────────────
+// O'RIN TOGGLE
+// ─────────────────────────────────────
+async function toggleOrin(e,roomId,orinN){
+  e.stopPropagation();
+  const r=rooms.find(x=>x.id===roomId);if(!r||!r.orins)return;
+  const o=r.orins.find(x=>x.n===orinN);if(!o)return;
+  o.status=o.status==='bosh'?'band':'bosh';
+  const bandCnt=r.orins.filter(x=>x.status==='band').length;
+  r.status=bandCnt===0?'bosh':bandCnt===r.orins.length?'band':'soon';
+  renderAdminRoomsMgmt();renderHomeInfo();renderAlerts();
+  await persistAll();
+}
+
+// ─────────────────────────────────────
+// SMS / CALL
+// ─────────────────────────────────────
+function sendSmsToWait(phone,name,roomNum){
+  const msg=encodeURIComponent('Assalomu alaykum '+name+'! RITM CLINIC: '+roomNum+'-xona bo’sh bo’ldi. Bron: +998XXXXXXXXX');
+  window.open('sms:'+phone+'?body='+msg);
+}
+function callWait(phone){window.open('tel:'+phone);}
+
+function showAdminPage(page,el){
+  document.querySelectorAll('.admin-page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.abn-item,.sb-item').forEach(i=>i.classList.remove('active'));
+  document.getElementById('admin'+page).classList.add('active');el.classList.add('active');
+  if(page==='Dashboard')renderAdminDashboard();
+  if(page==='Rooms')renderAdminRoomsMgmt();
+  if(page==='Patients')renderPatients();
+  if(page==='Food')renderFoodAdmin();
+  if(page==='Finance')renderFinance();
+  if(page==='Bookings')renderAdminBookings();
+  if(page==='Clients')renderAdminClients();
+  if(page==='WaitList')renderWaitList();
+  if(page==='Buildings'){renderBuildingsList();updateBuildingSelect();}
+  if(page==='Social')renderSocialPage();
+}
+
+function renderAdminDashboard(){
+  const tot=rooms.length,avail=rooms.filter(r=>r.status==='bosh').length,occ=rooms.filter(r=>r.status==='band').length;
+  const rev=bookings.reduce((s,b)=>s+(b.total||0),0);
+  const now2=new Date();now2.setHours(0,0,0,0);
+  const todayIncome=finance.filter(f=>f.type==='income'&&new Date(f.date)>=now2).reduce((s,f)=>s+(f.amt||0),0);
+  const activeBrons=bookings.filter(b=>{const s=new Date(b.start);s.setHours(0,0,0,0);const e=new Date(b.end);e.setHours(0,0,0,0);return s<=now2&&e>=now2;}).length;
+  document.getElementById('adminStats').innerHTML=
+    '<div class="stat-card blue"><div class="sc-icon">🏥</div><div class="sc-num">'+tot+'</div><div class="sc-lbl">Jami xonalar</div></div>'+
+    '<div class="stat-card green"><div class="sc-icon">✅</div><div class="sc-num">'+avail+'</div><div class="sc-lbl">Bo\'sh</div></div>'+
+    '<div class="stat-card red"><div class="sc-icon">🔴</div><div class="sc-num">'+occ+'</div><div class="sc-lbl">Band</div></div>'+
+    '<div class="stat-card yellow"><div class="sc-icon">📋</div><div class="sc-num">'+activeBrons+'</div><div class="sc-lbl">Faol bron</div></div>'+
+    '<div class="stat-card blue"><div class="sc-icon">💰</div><div class="sc-num">'+((todayIncome/1000).toFixed(0))+'K</div><div class="sc-lbl">Bugungi kirim</div></div>'+
+    '<div class="stat-card green"><div class="sc-icon">💵</div><div class="sc-num">'+((rev/1000000).toFixed(1))+'M</div><div class="sc-lbl">Jami daromad</div></div>';
+  renderBTable('recentBookingsTable',[...bookings].reverse().slice(0,5));
+}
+
+function renderAdminBookings(){renderBTable('allBookingsTable',[...bookings].reverse());}
+
+function renderBTable(id,data){
+  const el=document.getElementById(id);if(!el)return;
+  const now=new Date();now.setHours(0,0,0,0);
+  el.innerHTML='<table><thead><tr><th>Xona</th><th>Mijoz</th><th>Kirish → Chiqish</th><th>Holat</th><th>Jami</th></tr></thead><tbody>'+(data.length?data.map(b=>{
+    const start=new Date(b.start);start.setHours(0,0,0,0);
+    const end=new Date(b.end);end.setHours(0,0,0,0);
+    const daysLeft=Math.round((end-now)/864e5);
+    const daysPassed=Math.round((now-start)/864e5);
+    const pct=Math.min(100,Math.max(0,Math.round(daysPassed/b.days*100)));
+    const isExpired=daysLeft<0;const notStarted=now<start;
+    let statusHtml='';let barColor='var(--accent2)';
+    if(isExpired){statusHtml='<span style="color:var(--danger);font-size:10px;font-weight:800;">✗ Tugagan</span>';barColor='var(--danger)';}
+    else if(notStarted){statusHtml='<span style="color:var(--gold);font-size:10px;font-weight:800;">⏳ Kutilmoqda</span>';barColor='var(--gold)';}
+    else if(daysLeft<=2){statusHtml='<span style="color:var(--danger);font-size:10px;font-weight:800;">🔴 '+daysLeft+' kun</span>';barColor='var(--danger)';}
+    else if(daysLeft<=5){statusHtml='<span style="color:var(--warn);font-size:10px;font-weight:800;">🟡 '+daysLeft+' kun</span>';barColor='var(--warn)';}
+    else{statusHtml='<span style="color:var(--accent2);font-size:10px;font-weight:800;">🟢 '+daysLeft+' kun</span>';barColor='var(--accent2)';}
+    const barHtml=!notStarted?'<div class="admin-bk-bar"><div class="admin-bk-fill" style="width:'+pct+'%;background:'+barColor+';"></div></div>':'';
+    return '<tr><td style="color:var(--accent);font-weight:700">№'+b.roomNum+'</td><td style="color:var(--white)">'+b.client+'</td><td style="color:var(--muted2);font-size:10px">'+fdate(b.start)+' → '+fdate(b.end)+'<br><span>'+b.days+' kun</span></td><td style="min-width:80px">'+statusHtml+barHtml+'</td><td style="font-weight:700">'+fp(b.total)+'</td></tr>';
+  }).join(''):'<tr><td colspan="5" style="text-align:center;color:var(--muted2);padding:24px">Bronlar yo\'q</td></tr>')+'</tbody></table>';
+}
+
+function renderAdminClients(){
+  document.getElementById('clientsTable').innerHTML='<table><thead><tr><th>#</th><th>Ism</th><th>Telefon</th><th>Tashrif</th></tr></thead><tbody>'+(clients.length?clients.map((c,i)=>'<tr><td style="color:var(--muted2)">'+(i+1)+'</td><td style="color:var(--white)">'+c.name+'</td><td style="color:var(--muted2)">'+c.phone+'</td><td><span class="badge green">'+(c.visits||0)+'x</span></td></tr>').join(''):'<tr><td colspan="4" style="text-align:center;color:var(--muted2);padding:24px">Yo\'q</td></tr>')+'</tbody></table>';
+}
+
+function renderAdminRoomsMgmt(){
+  var grid=document.getElementById('adminRoomsMgmtGrid');if(!grid)return;
+  var html='';
+  for(var i=0;i<rooms.length;i++){
+    var r=rooms[i];var av=getAv(r);
+    var imgHtml=r.imgs&&r.imgs[0]
+      ?'<img src="'+r.imgs[0]+'" style="width:100%;height:80px;object-fit:cover;border-radius:10px 10px 0 0;">'
+      :'<div style="height:50px;display:flex;align-items:center;justify-content:center;font-size:32px;">'+r.icon+'</div>';
+    html+='<div class="arc">'+
+      imgHtml+
+      '<div class="arc-info">'+
+        '<div class="arc-num">Xona №'+r.num+' <small style="font-size:9px;color:var(--muted2);">'+(r.blok||'')+ ' blok</small></div>'+
+        '<div class="arc-name">'+(r.category==='premium'?'⭐ ':'')+r.type+' kishi · '+fp(r.price)+'/kun</div>'+
+        '<span class="arc-st '+av.cls+'">'+av.em+' '+av.text+'</span>'+
+        +(r.orins&&r.orins.length?'<div class="orins-row">'+r.orins.map(o=>'<span class="orin '+(o.status==='bosh'?'orin-bosh':'orin-band')+'" onclick="toggleOrin(event,\''+r.id+'\',\''+o.n+'\')">'+(o.status==='bosh'?'⭕':'❌')+' '+o.n+'</span>').join('')+'</div>':'')+((r.waitList&&r.waitList.length)?'<div style="font-size:9px;color:#f59e0b;margin-top:2px;">⏳ Navbat: '+r.waitList.length+' kishi</div>':'')+
+      '</div>'+
+      '<div class="arc-actions">'+
+        '<button class="arc-btn av" data-id="'+r.id+'" data-st="bosh" onclick="setRoomSt(this.dataset.id,this.dataset.st)">✅ Bosh</button>'+
+        '<button class="arc-btn bsy" data-id="'+r.id+'" data-st="band" onclick="setRoomSt(this.dataset.id,this.dataset.st)">🔴 Band</button>'+
+        '<button class="arc-btn sn" data-id="'+r.id+'" onclick="setRoomSoon(this.dataset.id)">🟡 Yaqinda</button>'+
+        '<button class="arc-btn ed" data-id="'+r.id+'" onclick="openRoomForm(this.dataset.id)">✏️ Tahrir</button>'+
+        '<button class="arc-btn dl" data-id="'+r.id+'" onclick="deleteRoom(this.dataset.id)">🗑 Del</button>'+
+      '</div>'+
+    '</div>';
+  }
+  grid.innerHTML=html;
+}
+
+async function setRoomSt(id,status){
+  const ri=rooms.findIndex(r=>r.id===id);if(ri<0)return;
+  const r=rooms[ri];const wasband=r.status==='band';
+  r.status=status;
+  if(status==='bosh'){
+    r.checkoutDate=null;
+    if(r.orins)r.orins.forEach(o=>o.status='bosh');
+    if(wasband&&r.waitList&&r.waitList.length){
+      const w=r.waitList[0];
+      showToast('📞 '+w.name+' ga xabar bering!','🛎️');
+      setTimeout(()=>{if(confirm('Xona №'+r.num+' bo’shdi.\nNavbatdagi: '+w.name+' ('+w.phone+')\nQo’ng’iroq?')){window.open('tel:'+w.phone);}},600);
+    }
+  }
+  renderAdminRoomsMgmt();renderHomeInfo();renderAlerts();
+  showToast(status==='bosh'?"Bosh qilindi ✅":"Band qilindi 🔴");
+  await persistAll();
+}
+
+async function setRoomSoon(id){
+  const date=prompt("Bo\'shash sanasi (YYYY-MM-DD):",fd(3));if(!date)return;
+  const ri=rooms.findIndex(r=>r.id===id);if(ri<0)return;
+  rooms[ri].status='soon';rooms[ri].checkoutDate=date;
+  renderAdminRoomsMgmt();renderHomeInfo();renderAlerts();
+  showToast("Yaqinda bo\'shaydi 🟡");
+  await persistAll();
+}
+
+async function deleteRoom(id){
+  if(!confirm("Xonani o\'chirish?"))return;
+  rooms=rooms.filter(r=>r.id!==id);
+  renderAdminRoomsMgmt();
+  showToast("O'chirildi",'🗑️');
+  await persistAll();
+}
+
+function selStatus(s){
+  selSt=s;
+  ['bosh','band','soon'].forEach(x=>document.getElementById('rfsb-'+x).classList.toggle('sel',x===s));
+  document.getElementById('rfSoonWrap').style.display=s==='soon'?'block':'none';
+}
+
+// Rasm preview uchun vaqtinchalik saqlash
+let _roomImgs = [null, null, null];
+
+function previewRoomImg(input, idx){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const img = new Image();
+    img.onload = function(){
+      // JSONBin uchun kichik saqlash: 400px, 0.5 sifat (~20KB)
+      const MAX = 400;
+      let w = img.width, h = img.height;
+      if(w > h){ if(w>MAX){h=Math.round(h*MAX/w);w=MAX;} }
+      else{ if(h>MAX){w=Math.round(w*MAX/h);h=MAX;} }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      const data = canvas.toDataURL('image/jpeg', 0.5);
+      _roomImgs[idx-1] = data;
+      const prev = document.getElementById('rfImg'+idx+'Preview');
+      if(prev){
+        prev.innerHTML = '<img src="'+data+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">';
+      }
+      // Hajmni ko'rsatish
+      const kb = Math.round(data.length * 0.75 / 1024);
+      showToast('Rasm qo\'shildi ('+kb+'KB)','🖼️');
+    };
+    img.src = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function openRoomForm(roomId){
+  _roomImgs = [null, null, null];
+  // Preview larni tozalash
+  [1,2,3].forEach(i=>{
+    const p = document.getElementById('rfImg'+i+'Preview');
+    if(p) p.innerHTML = '+';
+    const inp = document.getElementById('rfImg'+i);
+    if(inp) inp.value = '';
+  });
+  if(roomId){
+    // Tahrirlash
+    editingRoomId = roomId;
+    const r = rooms.find(x=>x.id===roomId);
+    if(!r) return;
+    document.getElementById('rfTitle').textContent = "Xona №"+r.num+" tahrirlash";
+    document.getElementById('rfNum').value = r.num;
+    document.getElementById('rfType').value = r.type;
+    updateBuildingSelect();
+    setTimeout(()=>{try{document.getElementById('rfBlok').value=r.blok||'';}catch(e){}},60);
+    document.getElementById('rfCategory').value = r.category||'standart';
+    document.getElementById('rfIcon').value = r.icon||'🛏️';
+    selStatus(r.status||'bosh');
+    document.getElementById('rfSoonDate').value = r.checkoutDate||'';
+    // Mavjud rasmlarni ko'rsatish
+    const imgs = r.imgs||[];
+    [0,1,2].forEach(i=>{
+      if(imgs[i]){
+        _roomImgs[i] = imgs[i];
+        const p = document.getElementById('rfImg'+(i+1)+'Preview');
+        if(p) p.innerHTML = '<img src="'+imgs[i]+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">';
+      }
+    });
+  } else {
+    editingRoomId = null;
+    document.getElementById('rfTitle').textContent = "Yangi xona qo'shish";
+    document.getElementById('rfNum').value = '';
+    document.getElementById('rfType').value = '3';
+    updateBuildingSelect();
+    document.getElementById('rfCategory').value = 'standart';
+    document.getElementById('rfIcon').value = '🛏️';
+    selStatus('bosh');
+    document.getElementById('rfSoonDate').value = '';
+  }
+  // Sharoitlar checkboxlarini render qilish
+  const allFeatures=['📺 Televizor','❄️ Konditsioner','🚿 Shaxsiy hojatxona','📶 Wi-Fi','🍽️ 3 mahal ovqat','💆 Fizioterapiya','🛁 Jakuziy','🏋️ Sport zal','🔒 Seyf','🌿 Balkon','🛎️ Kun tartib xizmati','♿ Nogironlar uchun'];
+  const curFeatures = roomId?(rooms.find(x=>x.id===roomId)||{}).features||[]:[];
+  const fg=document.getElementById('rfFeaturesGrid');
+  if(fg){
+    fg.innerHTML=allFeatures.map(f=>{
+      const checked=curFeatures.some(cf=>cf.replace(/^[^\w]*\s*/,'').toLowerCase()===f.replace(/^[^\w]*\s*/,'').toLowerCase()||cf===f)?'checked':'';
+      return '<label style="display:flex;align-items:center;gap:5px;background:var(--card2);border:1px solid var(--border);border-radius:8px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text);white-space:nowrap;">'
+        +'<input type="checkbox" class="feat-cb" value="'+f+'" '+checked+' style="accent-color:var(--accent);cursor:pointer;">'+f+'</label>';
+    }).join('');
+  }
+  updateRfOrins();
+  document.getElementById('roomFormModal').classList.add('open');
+}
+
+function updateRfOrins(){const t=parseInt(document.getElementById('rfType').value)||3;const g=document.getElementById('rfOrinsGrid');if(g)g.innerHTML=Array.from({length:t},(_,i)=>'<div style="padding:5px 10px;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.2);border-radius:8px;font-size:11px;font-weight:700;color:var(--accent2);">O\'rin '+(i+1)+'</div>').join('');}
+function closeRoomForm(){document.getElementById('roomFormModal').classList.remove('open');}
+
+
+
+// ── Cloudinary Settings ──
+function openCloudSettings(){
+  const modal = document.getElementById('cloudModal');
+  if(!modal) return;
+  document.getElementById('clCloudName').value = localStorage.getItem('cl_cloud')||'';
+  document.getElementById('clPreset').value = localStorage.getItem('cl_preset')||'';
+  modal.style.display = 'flex';
+}
+function saveCloudSettings(){
+  const cloud = document.getElementById('clCloudName').value.trim();
+  const preset = document.getElementById('clPreset').value.trim();
+  if(!cloud||!preset){ showToast('To\'ldiring!','⚠️'); return; }
+  localStorage.setItem('cl_cloud', cloud);
+  localStorage.setItem('cl_preset', preset);
+  document.getElementById('cloudModal').style.display = 'none';
+  showToast('Cloudinary sozlandi! ✅ Endi rasmlar bulutga yuklanadi.','☁️');
+}
+function getCloudConfig(){
+  return {
+    cloud: localStorage.getItem('cl_cloud')||CL_CLOUD,
+    preset: localStorage.getItem('cl_preset')||CL_PRESET
+  };
+}
+
+// ── Cloudinary rasm yuklash ──
+const CL_CLOUD = 'demoritm'; // Cloudinary cloud name (o'zgartiring)
+const CL_PRESET = 'ritm_clinic'; // Upload preset (unsigned)
+
+async function uploadToCloudinary(base64Data){
+  try{
+    // base64 -> blob
+    const res = await fetch(base64Data);
+    const blob = await res.blob();
+    const fd = new FormData();
+    fd.append('file', blob);
+    fd.append('upload_preset', cfg.preset);
+    fd.append('folder', 'ritm_clinic');
+    const cfg = getCloudConfig();
+    const r = await fetch('https://api.cloudinary.com/v1_1/'+cfg.cloud+'/image/upload', {
+      method:'POST', body:fd
+    });
+    if(!r.ok) return null;
+    const d = await r.json();
+    return d.secure_url || null;
+  }catch(e){ return null; }
+}
+
+async function uploadAllRoomImgs(){
+  // _roomImgs ichidagi base64 larni Cloudinary ga yuklash
+  for(let i=0;i<_roomImgs.length;i++){
+    const img = _roomImgs[i];
+    if(img && img.startsWith('data:')){
+      const prev = document.getElementById('rfImg'+(i+1)+'Preview');
+      if(prev) prev.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:11px;color:var(--accent);">⬆️ Yuklanmoqda...</div>';
+      const url = await uploadToCloudinary(img);
+      if(url){
+        _roomImgs[i] = url;
+        if(prev) prev.innerHTML = '<img src="'+url+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">';
+      } else {
+        // Cloudinary ishlamasa base64 saqlaydi (lokal)
+        if(prev) prev.innerHTML = '<img src="'+img+'" style="width:100%;height:100%;object-fit:cover;border-radius:10px;">';
+      }
+    }
+  }
+}
+async function saveRoom(){
+  const num = document.getElementById('rfNum').value.trim();
+  const type = parseInt(document.getElementById('rfType').value);
+  const icon = document.getElementById('rfIcon').value.trim()||'🛏️';
+  if(!num){showToast("Xona raqamini kiriting!",'⚠️');return;}
+  // Rasmlarni Cloudinary ga yuklash
+  showLoading('Rasmlar yuklanmoqda...');
+  await uploadAllRoomImgs();
+  hideLoading();
+  const price = type===3?150000:180000;
+  const checkedFeatures=Array.from(document.querySelectorAll('#rfFeaturesGrid .feat-cb:checked')).map(cb=>cb.value);
+  const features=checkedFeatures.length?checkedFeatures:(type===3
+    ?['Televizor','Konditsioner','Toza hojatxona','Wi-Fi','3 mahal ovqat','Fizioterapiya']
+    :['Televizor','Konditsioner','Shaxsiy hojatxona','Wi-Fi','3 mahal ovqat','Fizioterapiya','Jakuziy']);
+  const checkoutDate = selSt==='soon'?(document.getElementById('rfSoonDate').value||null):null;
+  const imgs = _roomImgs.filter(Boolean);
+
+  if(editingRoomId){
+    const r = rooms.find(x=>x.id===editingRoomId);
+    if(r){
+      r.num=num; r.type=type; r.icon=icon; r.price=price;
+      r.features=features; r.status=selSt; r.checkoutDate=checkoutDate;
+      if(imgs.length) r.imgs=imgs;
+    }
+    showToast('Xona №'+num+' yangilandi ✅','✅');
+  } else {
+    rooms.push({id:'r'+uid(),num,type,price,icon,imgs,img:imgs[0]||null,features,status:selSt,checkoutDate});
+    showToast('Xona №'+num+' qo\'shildi! 🎉','✅');
+  }
+  closeRoomForm();
+  renderAdminRoomsMgmt();renderHomeInfo();renderAlerts();
+  await persistAll();
+}
+
+function showToast(msg,icon){
+  icon=icon||'✅';
+  const t=document.getElementById('toast');
+  document.getElementById('toastMsg').textContent=msg;
+  document.getElementById('toastIcon').textContent=icon;
+  t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  const bs=document.getElementById('bookStart');
+  if(bs)bs.addEventListener('change',function(){const d=new Date(this.value);d.setDate(d.getDate()+1);document.getElementById('bookEnd').min=d.toISOString().split('T')[0];document.getElementById('bookEnd').value='';document.getElementById('costCalc').style.display='none';});
+});
+
+(async function init(){
+  // 1) Serverdan data yukla (deploy3 uslubi — hamma qurilma bir xil ko'radi)
+  await loadAllData();
+
+  // 2) UI ga joylashtirish
+  try{ updateBuildingSelect(); }catch(e){}
+  try{ renderHomeInfo(); renderAlerts(); renderAllRooms(); }catch(e){}
+  try{ renderPublicFood(); }catch(e){}
+
+  // 3) Session tekshir — 1 marta kirsa qayta so'ramasin (1 yil)
+  try{
+    const s = loadSession();
+    if(s && s.a){ showScreen('adminScreen'); renderAdminDashboard(); }
+    else if(s && s.u){ currentUser=s.u; enterMain(s.u.name.split(' ')[0]); }
+    else{ showScreen('loginScreen'); }
+  }catch(e){ showScreen('loginScreen'); }
+
+  // 4) Polling — har 15 sekunda yangilash
+  startPolling();
+})();
+
+// ============================================================
+//  DEFAULT FOOD
+// ============================================================
+function getDefaultFood(){
+  return {
+    mon:{b:'Ko\'cha non, sariyog\', choy',l:'Osh (palov)',d:'Tovuq sho\'rva'},
+    tue:{b:'Tuxum qaynatma, non',l:'Sho\'rva (mastava)',d:'Gu\'sht qovurma'},
+    wed:{b:'Pyure, kolbasa',l:'Lagman',d:'Baliq qovurma'},
+    thu:{b:'Bo\'tqa (guruch)',l:'Manti',d:'Sabzavot sho\'rva'},
+    fri:{b:'Non, sariyog\', qaymoq',l:'Dimlama',d:'Qozon kabob'},
+    sat:{b:'Tuxum ko\'k piyoz bilan',l:'Somsa, choy',d:'Osh'},
+    sun:{b:'Bliin yoki blin',l:'Sho\'rva',d:'Tovuq qovurma'}
+  };
+}
+
+// ============================================================
+//  FOOD ADMIN RENDER
+// ============================================================
+var DAYS=[
+  {k:'mon',lbl:'Dushanba'},
+  {k:'tue',lbl:'Seshanba'},
+  {k:'wed',lbl:'Chorshanba'},
+  {k:'thu',lbl:'Payshanba'},
+  {k:'fri',lbl:'Juma'},
+  {k:'sat',lbl:'Shanba'},
+  {k:'sun',lbl:'Yakshanba'}
+];
+
+function renderFoodAdmin(){
+  if(!food||Object.keys(food).length===0)food=getDefaultFood();
+  var html='';
+  DAYS.forEach(function(d){
+    var row=food[d.k]||{b:'',l:'',d:''};
+    html+='<div class="food-table-row">'
+      +'<div class="ftc day">'+d.lbl+'</div>'
+      +'<div class="ftc"><input id="f-'+d.k+'-b" value="'+esc(row.b)+'" placeholder="Nonushta..."></div>'
+      +'<div class="ftc"><input id="f-'+d.k+'-l" value="'+esc(row.l)+'" placeholder="Tushlik..."></div>'
+      +'<div class="ftc"><input id="f-'+d.k+'-d" value="'+esc(row.d)+'" placeholder="Kechki..."></div>'
+      +'</div>';
+  });
+  document.getElementById('foodTableBody').innerHTML=html;
+}
+
+function esc(s){return (s||'').replace(/"/g,'&quot;');}
+
+async function saveFood(){
+  var newFood={};
+  DAYS.forEach(function(d){
+    newFood[d.k]={
+      b:document.getElementById('f-'+d.k+'-b').value,
+      l:document.getElementById('f-'+d.k+'-l').value,
+      d:document.getElementById('f-'+d.k+'-d').value
+    };
+  });
+  food=newFood;
+  showToast('Taomnoma saqlandi!','🍽️');
+  await persistAll();
+}
+
+// Render food in public home page (weekly schedule)
+var _foodCat='all';
+function switchFoodCat(cat,el){
+  _foodCat=cat;
+  document.querySelectorAll('.food-cat-tab').forEach(function(t){t.classList.remove('fct-active');});
+  el.classList.add('fct-active');
+  renderPublicFood();
+}
+function toggleLic(el){
+  el.classList.toggle('expanded');
+}
+function renderPublicFood(){
+  var el=document.getElementById('publicFoodTable');if(!el)return;
+  if(!food||!food.mon){el.innerHTML='';return;}
+  var html='';
+  if(_foodCat==='all'){
+    html+='<div class="wt-row head"><div class="wt-cell">Kun</div><div class="wt-cell">Nonushta</div><div class="wt-cell">Tushlik</div><div class="wt-cell">Kechki</div></div>';
+    DAYS.forEach(function(d){
+      var row=food[d.k]||{b:'-',l:'-',d:'-'};
+      html+='<div class="wt-row"><div class="wt-cell day">'+d.lbl+'</div>'
+        +'<div class="wt-cell">'+row.b+'</div>'
+        +'<div class="wt-cell">'+row.l+'</div>'
+        +'<div class="wt-cell">'+row.d+'</div></div>';
+    });
+  } else {
+    var catLabel={'b':'🌅 Nonushta','l':'☀️ Tushlik','d':'🌙 Kechki'}[_foodCat];
+    html+='<div class="wt-cat-card"><div class="wt-cat-header"><div class="wt-cat-title">'+catLabel+'</div></div>';
+    DAYS.forEach(function(d){
+      var row=food[d.k]||{b:'-',l:'-',d:'-'};
+      html+='<div class="wt-cat-row"><div class="wt-cat-day">'+d.lbl+'</div><div class="wt-cat-meal">'+row[_foodCat]+'</div></div>';
+    });
+    html+='</div>';
+  }
+  el.innerHTML=html;
+}
+
+// ============================================================
+//  FINANCE
+// ============================================================
+function finChangeMonth(dir){
+  finMonth+=dir;
+  if(finMonth<0){finMonth=11;finYear--;}
+  if(finMonth>11){finMonth=0;finYear++;}
+  renderFinance();
+}
+
+
+
+let _finFilter='all';
+function finFilterSet(f,el){
+  _finFilter=f;
+  document.querySelectorAll('.fin-filter-btn').forEach(b=>{
+    if(b===el){b.style.background='rgba(0,180,200,0.12)';b.style.color='var(--accent)';b.style.borderColor='rgba(0,180,200,0.2)';}
+    else{b.style.background='var(--card2)';b.style.color='var(--muted2)';b.style.borderColor='var(--border)';}
+  });
+  renderFinance();
+}
+// ─────────────────────────────────────
+// IJTIMOIY BO'LIM
+// ─────────────────────────────────────
+function renderSocialPage(){
+  const el=document.getElementById('socialPageContent');
+  if(!el)return;
+  // Stats uchun
+  const totalClients=clients.length;
+  const totalBookings=bookings.length;
+  const now=new Date();now.setHours(0,0,0,0);
+  const activeB=bookings.filter(b=>{const s=new Date(b.start);s.setHours(0,0,0,0);const e=new Date(b.end);e.setHours(0,0,0,0);return s<=now&&e>=now;});
+  const thisMonth=new Date(now.getFullYear(),now.getMonth(),1);
+  const monthIncome=finance.filter(f=>f.type==='income'&&new Date(f.date)>=thisMonth).reduce((s,f)=>s+(f.amt||0),0);
+
+  el.innerHTML=`
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px;">
+    <div style="background:rgba(0,180,200,0.06);border:1px solid rgba(0,180,200,0.15);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:var(--white);font-family:'Playfair Display',serif;">${totalClients}</div>
+      <div style="font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;margin-top:2px;">Jami mijozlar</div>
+    </div>
+    <div style="background:rgba(0,229,160,0.06);border:1px solid rgba(0,229,160,0.15);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:var(--accent2);font-family:'Playfair Display',serif;">${activeB.length}</div>
+      <div style="font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;margin-top:2px;">Faol bronlar</div>
+    </div>
+    <div style="background:rgba(240,165,0,0.06);border:1px solid rgba(240,165,0,0.15);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-size:24px;font-weight:800;color:var(--gold);font-family:'Playfair Display',serif;">${totalBookings}</div>
+      <div style="font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;margin-top:2px;">Jami bronlar</div>
+    </div>
+    <div style="background:rgba(0,180,200,0.06);border:1px solid rgba(0,180,200,0.15);border-radius:14px;padding:14px;text-align:center;">
+      <div style="font-size:20px;font-weight:800;color:var(--accent);font-family:'Playfair Display',serif;">${(monthIncome/1000).toFixed(0)}K</div>
+      <div style="font-size:10px;color:var(--muted2);font-weight:600;text-transform:uppercase;margin-top:2px;">Oylik kirim</div>
+    </div>
+  </div>
+
+  <div style="font-family:'Playfair Display',serif;font-size:15px;color:var(--white);font-weight:700;margin-bottom:10px;">📱 Post yaratish</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px;">
+    <div style="font-size:11px;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Post turi</div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;" id="postTypeRow">
+      <button onclick="setSocialPost('promo')" class="spt-btn active" data-t="promo">🎁 Aksiya</button>
+      <button onclick="setSocialPost('info')" class="spt-btn" data-t="info">ℹ️ Ma'lumot</button>
+      <button onclick="setSocialPost('stat')" class="spt-btn" data-t="stat">📊 Statistika</button>
+      <button onclick="setSocialPost('invite')" class="spt-btn" data-t="invite">📣 Taklif</button>
+    </div>
+    <div style="font-size:11px;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;">Ijtimoiy tarmoq</div>
+    <div style="display:flex;gap:6px;margin-bottom:12px;">
+      <button onclick="setSocialNet('telegram')" class="snet-btn active" data-n="telegram">✈️ Telegram</button>
+      <button onclick="setSocialNet('instagram')" class="snet-btn" data-n="instagram">📸 Instagram</button>
+      <button onclick="setSocialNet('whatsapp')" class="snet-btn" data-n="whatsapp">💬 WhatsApp</button>
+    </div>
+    <textarea id="socialPostText" style="width:100%;background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:12px;font-size:13px;color:var(--text);outline:none;resize:none;height:120px;font-family:'DM Sans',sans-serif;" placeholder="Post matni..."></textarea>
+    <div style="display:flex;gap:8px;margin-top:10px;">
+      <button onclick="generateSocialPost()" style="flex:1;padding:11px;background:linear-gradient(135deg,#00b4c8,#007a8a);color:#fff;border:none;border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;">✨ Auto yaratish</button>
+      <button onclick="copySocialPost()" style="flex:1;padding:11px;background:rgba(0,180,200,0.1);border:1px solid rgba(0,180,200,0.2);color:var(--accent);border-radius:12px;font-size:13px;font-weight:800;cursor:pointer;">📋 Nusxa olish</button>
+    </div>
+  </div>
+
+  <div style="font-family:'Playfair Display',serif;font-size:15px;color:var(--white);font-weight:700;margin-bottom:10px;">🏥 Klinika ma'lumotlari</div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:14px;">
+    <div style="font-size:11px;color:var(--muted2);font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Kontakt linki</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <a href="tel:+998000000000" style="flex:1;min-width:100px;padding:10px;background:rgba(0,229,160,0.08);border:1px solid rgba(0,229,160,0.2);border-radius:10px;color:var(--accent2);font-size:12px;font-weight:800;text-align:center;text-decoration:none;">📞 Qo'ng'iroq</a>
+      <a href="https://t.me/ritm_clinic" target="_blank" style="flex:1;min-width:100px;padding:10px;background:rgba(0,180,200,0.08);border:1px solid rgba(0,180,200,0.2);border-radius:10px;color:var(--accent);font-size:12px;font-weight:800;text-align:center;text-decoration:none;">✈️ Telegram</a>
+      <a href="https://instagram.com/ritm_clinic" target="_blank" style="flex:1;min-width:100px;padding:10px;background:rgba(240,165,0,0.08);border:1px solid rgba(240,165,0,0.2);border-radius:10px;color:var(--gold);font-size:12px;font-weight:800;text-align:center;text-decoration:none;">📸 Instagram</a>
+    </div>
+  </div>`;
+
+  // CSS
+  if(!document.getElementById('socialCSS')){
+    const s=document.createElement('style');s.id='socialCSS';
+    s.textContent='.spt-btn,.snet-btn{padding:6px 12px;border-radius:8px;font-size:11px;font-weight:800;cursor:pointer;border:1px solid var(--border);background:var(--card2);color:var(--muted2);transition:all 0.2s;}.spt-btn.active,.snet-btn.active{background:rgba(0,180,200,0.15);color:var(--accent);border-color:rgba(0,180,200,0.3);}';
+    document.head.appendChild(s);
+  }
+  generateSocialPost();
+}
+
+let _socialPostType='promo',_socialNet='telegram';
+function setSocialPost(t){_socialPostType=t;document.querySelectorAll('.spt-btn').forEach(b=>b.classList.toggle('active',b.dataset.t===t));generateSocialPost();}
+function setSocialNet(n){_socialNet=n;document.querySelectorAll('.snet-btn').forEach(b=>b.classList.toggle('active',b.dataset.n===n));generateSocialPost();}
+
+function generateSocialPost(){
+  const el=document.getElementById('socialPostText');if(!el)return;
+  const now=new Date();
+  const avail=rooms.filter(r=>r.status==='bosh').length;
+  const occ=rooms.filter(r=>r.status==='band').length;
+  const month=['Yanvar','Fevral','Mart','April','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'][now.getMonth()];
+  const tag=_socialNet==='instagram'?'\n\n#ritm_clinic #klinika #davolash #salomatlik #statsionar':'';
+  let post='';
+  if(_socialPostType==='promo'){
+    post=`🏥 RITM CLINIC — ${month} AKSIYASI!\n\n✨ ${month} oyida bron qilsangiz — maxsus chegirma!\n\n🛏️ Bo'sh xonalar: ${avail} ta\n💊 Zamonaviy davolash\n🍽️ 3 mahal ovqat\n📶 Wi-Fi bepul\n\n📞 Bron qilish: +998 XX XXX XX XX${tag}`;
+  } else if(_socialPostType==='info'){
+    post=`ℹ️ RITM CLINIC haqida\n\n🏥 Jami xonalar: ${rooms.length} ta\n🟢 Bo'sh: ${avail} ta\n🔴 Band: ${occ} ta\n\n✅ Xizmatlarimiz:\n• Statsionar davolash\n• Fizioterapiya\n• Kundalik oziq-ovqat\n• 24/7 tibbiy yordam\n\n📲 Bron: t.me/ritm_clinic${tag}`;
+  } else if(_socialPostType==='stat'){
+    const total=bookings.length;
+    post=`📊 ${month} oyidagi natijalar\n\n👥 Jami mijozlar: ${clients.length} ta\n📋 Bronlar: ${total} ta\n🏥 Faol xonalar: ${occ} ta\n\nHar bir mijozimiz bizning g'ururimiz! 💙\n\nRITM CLINIC — Sog'liq uchun eng yaxshi tanlov${tag}`;
+  } else {
+    post=`📣 E'TIBOR!\n\nRITM CLINIC statsionar xizmati sifatli davolash uchun eng qulay joy.\n\n🛏️ ${avail} ta xona mavjud\n⚡ Tezkor bron\n🔒 Ishonchli\n\n👇 Hozir bog'laning!\n📞 +998 XX XXX XX XX${tag}`;
+  }
+  el.value=post;
+}
+
+function copySocialPost(){
+  const el=document.getElementById('socialPostText');if(!el)return;
+  navigator.clipboard.writeText(el.value).then(()=>showToast('Nusxa olindi!','📋')).catch(()=>{el.select();document.execCommand('copy');showToast('Nusxa olindi!','📋');});
+}
+// ─────────────────────────────────────
+function renderFinance(){
+  var months=['Yanvar','Fevral','Mart','April','May','Iyun','Iyul','Avgust','Sentyabr','Oktyabr','Noyabr','Dekabr'];
+  var lbl=document.getElementById('finMonthLbl');
+  if(lbl)lbl.textContent=months[finMonth]+' '+finYear;
+  var records=(finance||[]).filter(function(r){
+    var d=new Date(r.date);
+    var inMonth=d.getMonth()===finMonth&&d.getFullYear()===finYear;
+    if(!inMonth)return false;
+    if(typeof _finFilter!=='undefined'&&_finFilter!=='all')return r.type===_finFilter;
+    return true;
+  });
+  var income=records.filter(function(r){return r.type==='income';}).reduce(function(s,r){return s+r.amt;},0);
+  var expense=records.filter(function(r){return r.type==='expense';}).reduce(function(s,r){return s+r.amt;},0);
+  var profit=income-expense;
+  var sum=document.getElementById('finSummary');
+  if(sum)sum.innerHTML=
+    '<div class="fin-card income"><div class="fin-lbl">Kirim</div><div class="fin-val green">'+fp(income)+'</div></div>'+
+    '<div class="fin-card expense"><div class="fin-lbl">Chiqim</div><div class="fin-val red">'+fp(expense)+'</div></div>'+
+    '<div class="fin-card profit"><div class="fin-lbl">Foyda</div><div class="fin-val gold">'+fp(profit)+'</div></div>';
+  var list=document.getElementById('finList');
+  if(!list)return;
+  if(!records.length){list.innerHTML='<div style="text-align:center;color:var(--muted2);padding:24px;font-size:13px;">Bu oyda yozuv yo\u2019q</div>';return;}
+  list.innerHTML=[...records].reverse().map(function(r){
+    const d=new Date(r.date);
+    const timeStr=d.getHours().toString().padStart(2,'0')+':'+d.getMinutes().toString().padStart(2,'0');
+    const dateStr=fdate(r.date)+' '+timeStr;
+    const icon=r.type==='income'?'📈':'📉';
+    return '<div class="fin-item">'
+      +'<div class="fin-item-dot '+r.type+'">'+icon+'</div>'
+      +'<div style="flex:1;"><div class="fin-item-desc">'+r.desc+'</div><div class="fin-item-date">'+dateStr+'</div></div>'
+      +'<div class="fin-item-amt '+r.type+'">'+fp(r.amt)+'</div>'
+      +'<button class="fin-del" data-fid="'+r.id+'" onclick="delFinRecord(this.dataset.fid)">×</button>'
+      +'</div>';
+  }).join('');
+}
+
+async function addFinRecord(){
+  var type=document.getElementById('finType').value;
+  var desc=document.getElementById('finDesc').value.trim();
+  var amt=parseInt(document.getElementById('finAmt').value);
+  if(!desc||!amt||amt<=0){showToast("To\'ldiring!",'\u26a0\ufe0f');return;}
+  finance.push({id:uid(),type,desc,amt,date:new Date().toISOString()});
+  document.getElementById('finDesc').value='';
+  document.getElementById('finAmt').value='';
+  renderFinance();
+  showToast('Yozuv qo\u2019shildi!','\u2705');
+  await persistAll();
+}
+
+async function delFinRecord(id){
+  finance=finance.filter(function(r){return r.id!==id;});
+  renderFinance();
+  await persistAll();
+}
+
+// ============================================================
+//  PATIENTS
+// ============================================================
+function renderPatients(){
+  var el=document.getElementById('patientsList');if(!el)return;
+  if(!patients.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🏥</div><h3>Bemorlar yo\u2019q</h3><p>Bemor qabul qilish uchun + tugmasini bosing</p></div>';return;}
+  el.innerHTML=patients.map(function(p){
+    return '<div class="patient-card">'
+      +'<div class="pat-av">'+p.name[0].toUpperCase()+'</div>'
+      +'<div class="pat-info">'
+      +'<div class="pat-name">'+p.name+' '+p.surname+'</div>'
+      +'<div class="pat-meta">'+p.age+' yosh \u00b7 '+p.address+'</div>'
+      +'<div class="pat-meta">Kirgan: '+fdate(p.checkIn)+(p.checkOut?' | Chiqish: '+fdate(p.checkOut):'')+'</div>'
+      +'</div>'
+      +'<div>'
+      +'<div class="pat-room-badge">\u2116'+p.room+'</div>'
+      +'<div style="display:flex;gap:5px;margin-top:6px;">'
+      +'<button class="pat-btn edit" data-pid="'+p.id+'" onclick="openPatientForm(this.dataset.pid)">✏️</button>'
+      +'<button class="pat-btn del" data-pid="'+p.id+'" onclick="delPatient(this.dataset.pid)">🗑</button>'
+      +'</div></div></div>';
+  }).join('');
+}
+
+function openPatientForm(id){
+  var p=id?patients.find(function(x){return x.id===id;}):null;
+  var overlay=document.getElementById('patOverlay');
+  document.getElementById('patId').value=p?p.id:'';
+  document.getElementById('patName').value=p?p.name:'';
+  document.getElementById('patSurname').value=p?p.surname:'';
+  document.getElementById('patAge').value=p?p.age:'';
+  document.getElementById('patAddress').value=p?p.address:'';
+  document.getElementById('patDiag').value=p?p.diag:'';
+  document.getElementById('patRoom').value=p?p.room:'';
+  document.getElementById('patCheckIn').value=p?p.checkIn:new Date().toISOString().split('T')[0];
+  document.getElementById('patCheckOut').value=p?p.checkOut:'';
+  document.getElementById('patNote').value=p?p.note:'';
+  overlay.classList.add('open');
+}
+
+function closePatientForm(){document.getElementById('patOverlay').classList.remove('open');}
+
+async function savePatient(){
+  var id=document.getElementById('patId').value;
+  var name=document.getElementById('patName').value.trim();
+  var surname=document.getElementById('patSurname').value.trim();
+  var age=document.getElementById('patAge').value.trim();
+  var address=document.getElementById('patAddress').value.trim();
+  var diag=document.getElementById('patDiag').value.trim();
+  var room=document.getElementById('patRoom').value.trim();
+  var checkIn=document.getElementById('patCheckIn').value;
+  var checkOut=document.getElementById('patCheckOut').value;
+  var note=document.getElementById('patNote').value.trim();
+  if(!name||!surname||!room){showToast("Ism, familiya va xona kiriting!",'\u26a0\ufe0f');return;}
+  if(id){
+    var idx=patients.findIndex(function(p){return p.id===id;});
+    if(idx>=0)patients[idx]={id,name,surname,age,address,diag,room,checkIn,checkOut,note};
+  } else {
+    patients.push({id:uid(),name,surname,age,address,diag,room,checkIn,checkOut,note,createdAt:Date.now()});
+  }
+  closePatientForm();renderPatients();
+  showToast('Bemor saqlandi!','\u2705');
+  await persistAll();
+}
+
+async function delPatient(id){
+  if(!confirm("Bemorni o\'chirish?"))return;
+  patients=patients.filter(function(p){return p.id!==id;});
+  renderPatients();
+  showToast("O\'chirildi",'\U0001f5d1');
+  await persistAll();
+}
+
+
+
+</script>
+</body>
+</html>
