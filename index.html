@@ -1261,6 +1261,11 @@ function startPolling(){
   }, 15000);
 }
 
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el)el.classList.add('active');
+}
 function showLoading(msg){document.getElementById('loadingText').textContent=msg||'Yuklanmoqda...';document.getElementById('loadingOverlay').style.display='flex';}
 function hideLoading(){document.getElementById('loadingOverlay').style.display='none';}
 
